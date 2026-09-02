@@ -1,13 +1,19 @@
 // Claim Your Hero — Addons
-// Sheet layering fix and pending-view synchronization for the Claim Your Hero selection flow.
+// Sheet layering, pending-view synchronization, and independent class filtering.
 
 const MODULE_ID = "claim-your-hero-addons";
 const CYH_ID = "claim-your-hero-v13-351";
 const CYH_FLAG = "pendingViews";
+const CYH_ROSTER_SETTING = "roster";
+const CYH_ROLES_SETTING = "roles";
 const SHEET_CLASS = "claim-your-hero-addons-sheet-layer";
 const SHEET_Z_INDEX = "10000";
+const CLASS_FILTER_CLASS = "claim-your-hero-addons-class-filter";
 const OBSERVER = foundry.CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
 const OWNER = foundry.CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+
+// The filter is UI-local: each open selection application keeps its own choice.
+const classFilters = new WeakMap();
 
 function hasSelectionOverlay() {
   return !!document.querySelector(`.${CYH_ID}.hero-selection`);
@@ -147,8 +153,126 @@ function syncRosterViewerIndicators(app) {
   }
 }
 
+/**
+ * Read the Claim Your Hero role catalog. The addon intentionally reads the public
+ * world setting instead of importing the main module's private implementation.
+ */
+function getClassCatalog() {
+  return game.settings.get(CYH_ID, CYH_ROLES_SETTING)?.roles ?? [];
+}
+
+/**
+ * Read the configured roster entries so the filter can match each visible card's
+ * Actor id against the role ids assigned to that hero.
+ */
+function getRosterEntries() {
+  return game.settings.get(CYH_ID, CYH_ROSTER_SETTING)?.entries ?? [];
+}
+
+/**
+ * Apply the currently selected class to the hero cards without modifying the main
+ * Claim Your Hero application. `null` means show the complete roster.
+ */
+function applyClassFilter(app) {
+  const selectedRoleId = classFilters.get(app) ?? null;
+  const entries = getRosterEntries();
+  const rolesByActor = new Map(entries.map(entry => [entry.actorId, new Set(entry.roles ?? [])]));
+
+  for (const card of app.element?.querySelectorAll?.(".hero-card[data-actor-id]") ?? []) {
+    const roleIds = rolesByActor.get(card.dataset.actorId) ?? new Set();
+    const visible = !selectedRoleId || roleIds.has(selectedRoleId);
+    card.hidden = !visible;
+  }
+
+  const filter = app.element?.querySelector(`.${CLASS_FILTER_CLASS}`);
+  if (filter) {
+    for (const button of filter.querySelectorAll("[data-role-id]")) {
+      button.classList.toggle("active", button.dataset.roleId === selectedRoleId);
+      button.setAttribute("aria-pressed", button.dataset.roleId === selectedRoleId ? "true" : "false");
+    }
+  }
+
+  // If the main app currently has a selected hero that disappeared from the filter,
+  // close its detail panel so the visible selection remains consistent with the grid.
+  if (selectedRoleId) {
+    const selectedCard = app.element?.querySelector(".hero-card.selected");
+    if (selectedCard?.hidden) {
+      app.element?.querySelector('[data-action="clearSelection"]')?.click();
+    }
+  }
+}
+
+/**
+ * Build the independent class-search strip and place it immediately below the header.
+ * It deliberately does not depend on the composition element existing.
+ */
+function ensureClassFilter(app) {
+  if (!app?.element || app?.options?.id !== `${CYH_ID}-selection`) return;
+
+  const root = app.element;
+  let filter = root.querySelector(`.${CLASS_FILTER_CLASS}`);
+  if (filter) {
+    applyClassFilter(app);
+    return;
+  }
+
+  const roles = getClassCatalog();
+  if (!roles.length) return;
+
+  filter = document.createElement("div");
+  filter.className = CLASS_FILTER_CLASS;
+  filter.setAttribute("aria-label", "Filtro por classe");
+
+  const label = document.createElement("span");
+  label.className = "class-filter-label";
+  label.textContent = "Classes";
+  filter.appendChild(label);
+
+  const buttons = document.createElement("div");
+  buttons.className = "class-filter-roles";
+
+  for (const role of roles) {
+    if (!role?.id || !role.name) continue;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "class-filter-role";
+    button.dataset.roleId = role.id;
+    button.setAttribute("aria-pressed", "false");
+    if (role.description) button.dataset.tooltip = role.description;
+
+    if (role.img) {
+      const img = document.createElement("img");
+      img.src = role.img;
+      img.alt = "";
+      button.appendChild(img);
+    }
+
+    const name = document.createElement("span");
+    name.className = "class-filter-name";
+    name.textContent = role.name;
+    button.appendChild(name);
+
+    button.addEventListener("click", () => {
+      const current = classFilters.get(app) ?? null;
+      classFilters.set(app, current === role.id ? null : role.id);
+      applyClassFilter(app);
+    });
+
+    buttons.appendChild(button);
+  }
+
+  filter.appendChild(buttons);
+
+  const header = root.querySelector(".stage-header");
+  if (header) header.after(filter);
+  else root.querySelector(".stage")?.prepend(filter);
+
+  applyClassFilter(app);
+}
+
 Hooks.once("ready", async () => {
-  console.log(`[${MODULE_ID}] Sheet layering and pending-view synchronization active.`);
+  console.log(`[${MODULE_ID}] Sheet layering, pending-view synchronization, and class filtering active.`);
 
   if (game.user === game.users.activeGM) {
     for (const user of game.users.filter(u => !u.isGM)) {
@@ -162,6 +286,7 @@ Hooks.once("ready", async () => {
       promoteActorSheet(app);
     }
     syncRosterViewerIndicators(app);
+    ensureClassFilter(app);
   });
 
   Hooks.on("updateUser", async (user, changes) => {
