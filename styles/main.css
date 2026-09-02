@@ -22,14 +22,6 @@
   background: var(--color-cool-5, #0b0a13);
 }
 
-.claim-your-hero-addons-class-filter .class-filter-label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary, #b0b0b0);
-}
-
 .claim-your-hero-addons-class-filter .class-filter-roles {
   display: flex;
   flex-wrap: wrap;
