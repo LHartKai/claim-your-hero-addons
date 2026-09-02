@@ -2,7 +2,7 @@
   "id": "claim-your-hero-addons",
   "title": "Claim Your Hero — Addons",
   "description": "Addons and extensions developed specifically to work with the Claim Your Hero fork.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "compatibility": {
     "minimum": "13",
     "verified": "13.351"
@@ -12,6 +12,9 @@
       "name": "LHartKai"
     }
   ],
+  "url": "https://github.com/LHartKai/claim-your-hero-addons",
+  "manifest": "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json",
+  "download": "https://github.com/LHartKai/claim-your-hero-addons/releases/download/v0.1.3/claim-your-hero-addons.zip",
   "esmodules": [
     "scripts/main.js"
   ],
