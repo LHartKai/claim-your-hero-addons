@@ -288,11 +288,6 @@ function ensureClassFilter(app) {
   filter.className = CLASS_FILTER_CLASS;
   filter.setAttribute("aria-label", "Filtro por classe");
 
-  const label = document.createElement("span");
-  label.className = "class-filter-label";
-  label.textContent = "Classes";
-  filter.appendChild(label);
-
   const buttons = document.createElement("div");
   buttons.className = "class-filter-roles";
 
