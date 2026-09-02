@@ -3,13 +3,14 @@ name: Release Foundry Module
 on:
   push:
     branches:
+      - main
       - testes
   release:
     types: [published]
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to package (for example v0.1.3)"
+        description: "Release tag to package (for example v0.1.5)"
         required: true
         type: string
 
@@ -23,7 +24,7 @@ env:
 
 jobs:
   release:
-    if: github.ref_name != 'testes'
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref_name != 'testes')
     runs-on: ubuntu-latest
     steps:
       - name: Check out release tag
@@ -60,6 +61,75 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          gh release upload "$TAG" claim-your-hero-addons.zip --clobber
+          gh release upload "$TAG" build/claim-your-hero-addons/module.json --clobber
+
+  auto-release:
+    if: github.event_name == 'push' && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Read module version
+        id: version
+        run: |
+          python - <<'PY'
+          import json, os
+          with open("module.json", encoding="utf-8") as f:
+              version = json.load(f)["version"]
+          tag = f"v{version}"
+          print(f"tag={tag}")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write(f"tag={tag}\n")
+          PY
+
+      - name: Package module
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          mkdir -p build/claim-your-hero-addons/scripts build/claim-your-hero-addons/styles build/claim-your-hero-addons/lang
+          cp module.json build/claim-your-hero-addons/module.json
+          cp scripts/main.js build/claim-your-hero-addons/scripts/main.js
+          cp styles/main.css build/claim-your-hero-addons/styles/main.css
+          cp lang/pt-BR.json build/claim-your-hero-addons/lang/pt-BR.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path("build/claim-your-hero-addons/module.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          tag = os.environ["TAG"]
+          version = tag[1:] if tag.startswith("v") else tag
+          data["version"] = version
+          data["manifest"] = "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json"
+          data["download"] = f"https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip"
+          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          PY
+          cd build
+          zip -r ../claim-your-hero-addons.zip claim-your-hero-addons
+
+      - name: Create official release if needed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; reusing it."
+          else
+            gh release create "$TAG" \
+              --target main \
+              --title "Claim Your Hero — Addons $TAG" \
+              --generate-notes
+          fi
+
+      - name: Upload official release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
         run: |
           gh release upload "$TAG" claim-your-hero-addons.zip --clobber
           gh release upload "$TAG" build/claim-your-hero-addons/module.json --clobber
