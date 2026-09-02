@@ -1,2 +1,9 @@
 /* Claim Your Hero — Addons */
-/* Shared styles for addon functionality. */
+/* Keep Actor sheets above the Claim Your Hero full-screen selection overlay. */
+
+.claim-your-hero-v13-351.hero-selection ~ .window-app,
+.claim-your-hero-v13-351.hero-selection ~ .app {
+  /* The JavaScript fix handles the actual sheet element; these selectors provide
+     an additional layer for Foundry windows rendered as siblings of the overlay. */
+  z-index: 10000 !important;
+}
