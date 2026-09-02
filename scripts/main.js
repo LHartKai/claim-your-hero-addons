@@ -203,8 +203,9 @@ function applyClassFilter(app) {
 }
 
 /**
- * Build the independent class-search strip and place it immediately below the header.
- * It deliberately does not depend on the composition element existing.
+ * Build the independent class-search strip. When the main module's recommended
+ * composition exists, the filter sits immediately below it; otherwise it sits below
+ * the header. The two controls remain completely independent.
  */
 function ensureClassFilter(app) {
   if (!app?.element || app?.options?.id !== `${CYH_ID}-selection`) return;
@@ -264,8 +265,10 @@ function ensureClassFilter(app) {
 
   filter.appendChild(buttons);
 
+  const composition = root.querySelector(".composition-bar");
   const header = root.querySelector(".stage-header");
-  if (header) header.after(filter);
+  if (composition) composition.after(filter);
+  else if (header) header.after(filter);
   else root.querySelector(".stage")?.prepend(filter);
 
   applyClassFilter(app);
