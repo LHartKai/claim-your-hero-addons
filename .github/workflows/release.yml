@@ -1,6 +1,9 @@
 name: Release Foundry Module
 
 on:
+  push:
+    branches:
+      - testes
   release:
     types: [published]
   workflow_dispatch:
@@ -13,8 +16,14 @@ on:
 permissions:
   contents: write
 
+env:
+  MODULE_ID: claim-your-hero-addons
+  TEST_BRANCH: testes
+  TEST_VERSION: 0.1.4
+
 jobs:
   release:
+    if: github.ref_name != 'testes'
     runs-on: ubuntu-latest
     steps:
       - name: Check out release tag
@@ -54,3 +63,104 @@ jobs:
         run: |
           gh release upload "$TAG" claim-your-hero-addons.zip --clobber
           gh release upload "$TAG" build/claim-your-hero-addons/module.json --clobber
+
+  test-release:
+    if: github.event_name == 'push' && github.ref_name == 'testes'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out testes
+        uses: actions/checkout@v4
+        with:
+          ref: testes
+          fetch-depth: 0
+
+      - name: Calculate test version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          base = os.environ["TEST_VERSION"]
+          prefix = f"v{base}-testes."
+          result = subprocess.run(
+              ["gh", "release", "list", "--limit", "100", "--json", "tagName,isPrerelease"],
+              check=True, capture_output=True, text=True
+          )
+          releases = json.loads(result.stdout)
+          numbers = []
+          for release in releases:
+              tag = release.get("tagName", "")
+              if release.get("isPrerelease") and tag.startswith(prefix):
+                  try:
+                      numbers.append(int(tag[len(prefix):]))
+                  except ValueError:
+                      pass
+          next_number = max(numbers, default=0) + 1
+          print(f"tag={prefix}{next_number}")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write(f"tag={prefix}{next_number}\n")
+          PY
+
+      - name: Package test module
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          mkdir -p build/claim-your-hero-addons/scripts build/claim-your-hero-addons/styles build/claim-your-hero-addons/lang
+          cp module.json build/claim-your-hero-addons/module.json
+          cp scripts/main.js build/claim-your-hero-addons/scripts/main.js
+          cp styles/main.css build/claim-your-hero-addons/styles/main.css
+          cp lang/pt-BR.json build/claim-your-hero-addons/lang/pt-BR.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path("build/claim-your-hero-addons/module.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          tag = os.environ["TAG"]
+          version = tag[1:] if tag.startswith("v") else tag
+          data["version"] = version
+          data["manifest"] = "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json"
+          data["download"] = f"https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip"
+          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          PY
+          cd build
+          zip -r ../claim-your-hero-addons.zip claim-your-hero-addons
+
+      - name: Create test prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          gh release create "$TAG" claim-your-hero-addons.zip build/claim-your-hero-addons/module.json \
+            --target testes \
+            --title "Claim Your Hero — Addons $TAG" \
+            --prerelease \
+            --generate-notes
+
+      - name: Remove previous test prereleases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          TEST_VERSION: ${{ env.TEST_VERSION }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          base = os.environ["TEST_VERSION"]
+          current = os.environ["TAG"]
+          prefix = f"v{base}-testes."
+          legacy = f"v{base}-testes"
+
+          result = subprocess.run(
+              ["gh", "release", "list", "--limit", "100", "--json", "tagName,isPrerelease"],
+              check=True, capture_output=True, text=True
+          )
+          releases = json.loads(result.stdout)
+
+          for release in releases:
+              tag = release.get("tagName", "")
+              if not release.get("isPrerelease") or tag == current:
+                  continue
+              if tag == legacy or tag.startswith(prefix):
+                  print(f"Removing previous test prerelease: {tag}")
+                  subprocess.run(["gh", "release", "delete", tag, "--yes"], check=True)
+          PY
