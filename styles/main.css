@@ -4,3 +4,77 @@
 .claim-your-hero-addons-sheet-layer {
   z-index: 10000 !important;
 }
+
+/* Independent class filter added by the addon. It intentionally mirrors the
+   visual language of the main module's composition bar without depending on it. */
+.claim-your-hero-addons-class-filter {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.8rem;
+  margin: 0.45rem auto 0;
+  padding: 0.45rem 0.8rem;
+  max-width: min(960px, 90%);
+  border: 1px solid var(--color-cool-3, #4d4b66);
+  border-radius: 10px;
+  background: var(--color-cool-5, #0b0a13);
+}
+
+.claim-your-hero-addons-class-filter .class-filter-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #b0b0b0);
+}
+
+.claim-your-hero-addons-class-filter .class-filter-roles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.claim-your-hero-addons-class-filter .class-filter-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--color-cool-3, #4d4b66);
+  border-radius: 14px;
+  background: var(--color-cool-4, #1c1b2a);
+  color: var(--color-text-primary, #f0f0f0);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.claim-your-hero-addons-class-filter .class-filter-role:hover,
+.claim-your-hero-addons-class-filter .class-filter-role.active {
+  border-color: var(--claim-your-hero-v13-351-accent);
+  color: var(--claim-your-hero-v13-351-accent);
+  box-shadow: 0 0 10px var(--claim-your-hero-v13-351-accent-glow);
+}
+
+.claim-your-hero-addons-class-filter .class-filter-role.active {
+  background: var(--color-cool-5, #0b0a13);
+}
+
+.claim-your-hero-addons-class-filter .class-filter-role img {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: none;
+}
+
+.claim-your-hero-addons-class-filter .class-filter-name {
+  line-height: 1;
+}
+
+.claim-your-hero-addons-class-filter + .hero-grid {
+  /* Keep the new control visually separate from the card grid while allowing the
+     grid to retain the main module's existing flexible layout. */
+  margin-top: 0.15rem;
+}
