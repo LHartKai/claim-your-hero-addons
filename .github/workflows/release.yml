@@ -27,19 +27,17 @@ jobs:
         env:
           TAG: ${{ github.event.release.tag_name || inputs.tag }}
         run: |
-          VERSION="${TAG#v}"
-          mkdir -p build/claim-your-hero-addons
-          cp module.json scripts/main.js styles/main.css build/claim-your-hero-addons/
           mkdir -p build/claim-your-hero-addons/scripts build/claim-your-hero-addons/styles build/claim-your-hero-addons/lang
-          cp scripts/main.js build/claim-your-hero-addons/scripts/
-          cp styles/main.css build/claim-your-hero-addons/styles/
-          cp lang/pt-BR.json build/claim-your-hero-addons/lang/
+          cp module.json build/claim-your-hero-addons/module.json
+          cp scripts/main.js build/claim-your-hero-addons/scripts/main.js
+          cp styles/main.css build/claim-your-hero-addons/styles/main.css
+          cp lang/pt-BR.json build/claim-your-hero-addons/lang/pt-BR.json
           python - <<'PY'
-          import json
+          import json, os
           from pathlib import Path
           p = Path("build/claim-your-hero-addons/module.json")
           data = json.loads(p.read_text(encoding="utf-8"))
-          tag = __import__("os").environ["TAG"]
+          tag = os.environ["TAG"]
           version = tag[1:] if tag.startswith("v") else tag
           data["version"] = version
           data["manifest"] = "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json"
