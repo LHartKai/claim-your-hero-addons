@@ -3,6 +3,7 @@
 
 const MODULE_ID = "claim-your-hero-addons";
 const CYH_ID = "claim-your-hero-v13-351";
+const SHEET_CLASS = "claim-your-hero-addons-sheet-layer";
 const SHEET_Z_INDEX = "10000";
 
 function hasSelectionOverlay() {
@@ -15,6 +16,7 @@ function promoteActorSheet(sheet) {
   const element = sheet.element instanceof HTMLElement ? sheet.element : sheet.element?.[0];
   if (!element) return;
 
+  element.classList.add(SHEET_CLASS);
   element.style.setProperty("z-index", SHEET_Z_INDEX, "important");
 }
 
