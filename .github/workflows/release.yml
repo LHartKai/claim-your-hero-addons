@@ -88,19 +88,51 @@ jobs:
               f.write(f"tag={tag}\n")
           PY
 
-      - name: Create official release
+      - name: Package module
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          mkdir -p build/claim-your-hero-addons/scripts build/claim-your-hero-addons/styles build/claim-your-hero-addons/lang
+          cp module.json build/claim-your-hero-addons/module.json
+          cp scripts/main.js build/claim-your-hero-addons/scripts/main.js
+          cp styles/main.css build/claim-your-hero-addons/styles/main.css
+          cp lang/pt-BR.json build/claim-your-hero-addons/lang/pt-BR.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path("build/claim-your-hero-addons/module.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          tag = os.environ["TAG"]
+          version = tag[1:] if tag.startswith("v") else tag
+          data["version"] = version
+          data["manifest"] = "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json"
+          data["download"] = f"https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip"
+          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          PY
+          cd build
+          zip -r ../claim-your-hero-addons.zip claim-your-hero-addons
+
+      - name: Create official release if needed
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
         run: |
           if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release $TAG already exists; nothing to do."
-            exit 0
+            echo "Release $TAG already exists; reusing it."
+          else
+            gh release create "$TAG" \
+              --target main \
+              --title "Claim Your Hero — Addons $TAG" \
+              --generate-notes
           fi
-          gh release create "$TAG" \
-            --target main \
-            --title "Claim Your Hero — Addons $TAG" \
-            --generate-notes
+
+      - name: Upload official release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          gh release upload "$TAG" claim-your-hero-addons.zip --clobber
+          gh release upload "$TAG" build/claim-your-hero-addons/module.json --clobber
 
   test-release:
     if: github.event_name == 'push' && github.ref_name == 'testes'
