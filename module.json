@@ -2,7 +2,7 @@
   "id": "claim-your-hero-addons",
   "title": "Claim Your Hero — Addons",
   "description": "Addons and extensions developed specifically to work with the Claim Your Hero fork.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "compatibility": {
     "minimum": "13",
     "verified": "13.351"
