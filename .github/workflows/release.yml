@@ -19,7 +19,6 @@ permissions:
 
 env:
   MODULE_ID: claim-your-hero-addons
-  TEST_BRANCH: testes
 
 jobs:
   release:
@@ -44,14 +43,14 @@ jobs:
           python - <<'PY'
           import json, os
           from pathlib import Path
-          p = Path("build/claim-your-hero-addons/module.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          tag = os.environ["TAG"]
-          version = tag[1:] if tag.startswith("v") else tag
-          data["version"] = version
-          data["manifest"] = "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json"
-          data["download"] = f"https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip"
-          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          p = Path('build/claim-your-hero-addons/module.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          tag = os.environ['TAG']
+          version = tag[1:] if tag.startswith('v') else tag
+          data['version'] = version
+          data['manifest'] = 'https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json'
+          data['download'] = f'https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip'
+          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
           PY
           cd build
           zip -r ../claim-your-hero-addons.zip claim-your-hero-addons
@@ -80,86 +79,50 @@ jobs:
           python - <<'PY'
           import json, os
           from pathlib import Path
-
-          current = json.loads(Path("module.json").read_text(encoding="utf-8"))["version"]
-          major, minor, patch = (int(part) for part in current.split("."))
-          next_version = f"{major}.{minor}.{patch + 1}"
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-              f.write(f"current={current}\n")
-              f.write(f"tag=v{current}\n")
-              f.write(f"next={next_version}\n")
+          current = json.loads(Path('module.json').read_text(encoding='utf-8'))['version']
+          major, minor, patch = (int(part) for part in current.split('.'))
+          next_version = f'{major}.{minor}.{patch + 1}'
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
+              f.write(f'current={current}\n')
+              f.write(f'next={next_version}\n')
+              f.write(f'tag=v{current}\n')
           PY
 
       - name: Build official release notes
-        id: notes
         env:
           GH_TOKEN: ${{ github.token }}
-          CURRENT_TAG: v${{ steps.version.outputs.current }}
+          TAG: v${{ steps.version.outputs.current }}
         run: |
           python - <<'PY'
-          import os, re, subprocess
+          import json, os, re, subprocess
           from pathlib import Path
-
-          notes_file = Path("TEST_NOTES.md")
-          raw = notes_file.read_text(encoding="utf-8") if notes_file.exists() else ""
-
-          # Extract feature headings from the development tracker. The tracker
-          # can contain progress, bugs and status markers; the official release
-          # only keeps the feature names in NEW.
+          raw = Path('TEST_NOTES.md').read_text(encoding='utf-8') if Path('TEST_NOTES.md').exists() else ''
           new_items = []
           for line in raw.splitlines():
-              if line.startswith("### "):
-                  title = line[4:].strip()
-                  title = re.sub(r"^[^A-Za-z0-9]+", "", title)
+              if line.startswith('### '):
+                  title = re.sub(r'^[^A-Za-z0-9]+', '', line[4:].strip())
                   if title:
-                      new_items.append(f"- {title}")
-
+                      new_items.append(f'- {title}')
           if not new_items:
-              for line in raw.splitlines():
-                  stripped = line.strip()
-                  if stripped.startswith("- ") and not stripped.startswith("- <!--"):
-                      clean = re.sub(r"^-\s*[^A-Za-z0-9]+", "- ", stripped)
-                      if clean != "- ":
-                          new_items.append(clean)
+              new_items = ['- No release feature summary was recorded.']
 
-          if not new_items:
-              new_items = ["- No release feature summary was recorded."]
-
-          previous_body = ""
-          result = subprocess.run(
-              ["gh", "release", "view", os.environ["CURRENT_TAG"], "--json", "body"],
-              capture_output=True, text=True
-          )
+          previous_body = ''
+          result = subprocess.run(['gh', 'release', 'view', os.environ['TAG'], '--json', 'body'], capture_output=True, text=True)
           if result.returncode == 0:
-              import json
-              previous_body = json.loads(result.stdout).get("body", "")
-
-          def section(body, heading):
-              match = re.search(
-                  rf"^## {re.escape(heading)}\\s*$([\\s\\S]*?)(?=^## |\\Z)",
-                  body,
-                  re.MULTILINE,
-              )
-              return match.group(1).strip() if match else ""
+              previous_body = json.loads(result.stdout).get('body', '')
 
           previous_features = []
-          for heading in ("NEW", "OTHER FEATURES"):
-              text = section(previous_body, heading)
-              for line in text.splitlines():
-                  if line.strip().startswith("- "):
-                      previous_features.append(line.strip())
+          for heading in ('NEW', 'OTHER FEATURES'):
+              match = re.search(rf'^## {re.escape(heading)}\\s*$([\\s\\S]*?)(?=^## |\\Z)', previous_body, re.MULTILINE)
+              if match:
+                  previous_features.extend(line.strip() for line in match.group(1).splitlines() if line.strip().startswith('- '))
 
-          body = "## NEW\n\n" + "\n".join(new_items) + "\n\n## OTHER FEATURES\n\n"
-          if previous_features:
-              body += "\n".join(previous_features)
-          else:
-              body += "- None yet."
-
-          Path("official-release-notes.md").write_text(body + "\n", encoding="utf-8")
+          body = '## NEW\n\n' + '\n'.join(new_items) + '\n\n## OTHER FEATURES\n\n'
+          body += '\n'.join(previous_features) if previous_features else '- None yet.'
+          Path('official-release-notes.md').write_text(body + '\n', encoding='utf-8')
           PY
 
-      - name: Package module
+      - name: Package official module
         env:
           TAG: v${{ steps.version.outputs.current }}
         run: |
@@ -171,14 +134,14 @@ jobs:
           python - <<'PY'
           import json, os
           from pathlib import Path
-          p = Path("build/claim-your-hero-addons/module.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          tag = os.environ["TAG"]
-          version = tag[1:] if tag.startswith("v") else tag
-          data["version"] = version
-          data["manifest"] = "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json"
-          data["download"] = f"https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip"
-          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          p = Path('build/claim-your-hero-addons/module.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          tag = os.environ['TAG']
+          version = tag[1:] if tag.startswith('v') else tag
+          data['version'] = version
+          data['manifest'] = 'https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json'
+          data['download'] = f'https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip'
+          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
           PY
           cd build
           zip -r ../claim-your-hero-addons.zip claim-your-hero-addons
@@ -191,10 +154,7 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG already exists; leaving it unchanged."
           else
-            gh release create "$TAG" \
-              --target main \
-              --title "Claim Your Hero — Addons $TAG" \
-              --notes-file official-release-notes.md
+            gh release create "$TAG" --target main --title "Claim Your Hero — Addons $TAG" --notes-file official-release-notes.md
           fi
 
       - name: Upload official release assets
@@ -205,43 +165,52 @@ jobs:
           gh release upload "$TAG" claim-your-hero-addons.zip --clobber
           gh release upload "$TAG" build/claim-your-hero-addons/module.json --clobber
 
-      - name: Prepare next testes cycle
+      - name: Remove prereleases for promoted version
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.current }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          prefix = f"v{os.environ['VERSION']}-testes."
+          result = subprocess.run(['gh', 'release', 'list', '--limit', '100', '--json', 'tagName,isPrerelease'], check=True, capture_output=True, text=True)
+          for release in json.loads(result.stdout):
+              tag = release.get('tagName', '')
+              if release.get('isPrerelease') and tag.startswith(prefix):
+                  print(f'Removing promoted-version prerelease: {tag}')
+                  subprocess.run(['gh', 'release', 'delete', tag, '--yes'], check=True)
+          PY
+
+      - name: Prepare next testes cycle
+        env:
           NEXT_VERSION: ${{ steps.version.outputs.next }}
         run: |
           git fetch origin testes
           git switch -C testes origin/testes
-
           python - <<'PY'
           import json, os
           from pathlib import Path
-
-          next_version = os.environ["NEXT_VERSION"]
-          p = Path("module.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          data["version"] = next_version
-          data["download"] = f"https://github.com/LHartKai/claim-your-hero-addons/releases/download/v{next_version}/claim-your-hero-addons.zip"
-          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-          Path("TEST_NOTES.md").write_text(
-              "## IN DEVELOPMENT\n\n"
-              "<!-- Add the features being worked on in this version.\n"
-              "Keep the tracker updated with progress, testing status, bugs and notes.\n\n"
-              "Suggested status markers:\n"
-              "- 🟢 Implemented / Working\n"
-              "- 🟡 Testing\n"
-              "- 🔧 In progress\n"
-              "- 🐛 Bug\n"
-              "- ⚠️ Needs attention\n"
-              "- 🔴 Blocked\n"
-              "-->\n",
-              encoding="utf-8",
-          )
+          version = os.environ['NEXT_VERSION']
+          p = Path('module.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          data['version'] = version
+          data['download'] = f'https://github.com/LHartKai/claim-your-hero-addons/releases/download/v{version}/claim-your-hero-addons.zip'
+          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+          Path('TEST_NOTES.md').write_text(
+              '## IN DEVELOPMENT\n\n'
+              '<!-- Add the features being worked on in this version.\n'
+              'Keep the tracker updated with progress, testing status, bugs and notes.\n\n'
+              'Suggested status markers:\n'
+              '- 🟢 Implemented / Working\n'
+              '- 🟡 Testing\n'
+              '- 🔧 In progress\n'
+              '- 🐛 Bug\n'
+              '- ⚠️ Needs attention\n'
+              '- 🔴 Blocked\n'
+              '-->\n', encoding='utf-8')
           PY
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add module.json TEST_NOTES.md
           if git diff --cached --quiet; then
             echo "Testes branch already prepared for $NEXT_VERSION."
@@ -260,50 +229,34 @@ jobs:
           ref: testes
           fetch-depth: 0
 
-      - name: Calculate test version
+      - name: Calculate test release number
         id: version
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python - <<'PY'
-          import json, os, re, subprocess
-          from pathlib import Path
-
-          main_module = subprocess.run(
-              ["gh", "api", "repos/${{ github.repository }}/contents/module.json?ref=main", "--jq", ".content"],
-              check=True, capture_output=True, text=True
-          ).stdout
-          import base64
-          main_version = json.loads(base64.b64decode(main_module).decode("utf-8"))["version"]
-          major, minor, patch = (int(part) for part in main_version.split("."))
-          test_base = f"{major}.{minor}.{patch + 1}"
-          prefix = f"v{test_base}-testes."
-
-          result = subprocess.run(
-              ["gh", "release", "list", "--limit", "100", "--json", "tagName,isPrerelease"],
-              check=True, capture_output=True, text=True
-          )
-          releases = json.loads(result.stdout)
+          import base64, json, os, subprocess
+          result = subprocess.run(['gh', 'api', 'repos/${{ github.repository }}/contents/module.json?ref=main', '--jq', '.content'], check=True, capture_output=True, text=True)
+          main_version = json.loads(base64.b64decode(result.stdout).decode('utf-8'))['version']
+          major, minor, patch = (int(part) for part in main_version.split('.'))
+          test_version = f'{major}.{minor}.{patch + 1}'
+          prefix = f'v{test_version}-testes.'
+          releases = json.loads(subprocess.run(['gh', 'release', 'list', '--limit', '100', '--json', 'tagName,isPrerelease'], check=True, capture_output=True, text=True).stdout)
           numbers = []
           for release in releases:
-              tag = release.get("tagName", "")
-              if release.get("isPrerelease") and tag.startswith(prefix):
+              tag = release.get('tagName', '')
+              if release.get('isPrerelease') and tag.startswith(prefix):
                   try:
                       numbers.append(int(tag[len(prefix):]))
                   except ValueError:
                       pass
-
-          next_number = max(numbers, default=0) + 1
-          tag = f"{prefix}{next_number}"
-          title = f"Claim Your Hero — Addons v{test_base} - testes.{next_number}"
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-              f.write(f"tag={tag}\n")
-              f.write(f"title={title}\n")
+          number = max(numbers, default=0) + 1
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
+              f.write(f'tag={prefix}{number}\n')
+              f.write(f'title=Claim Your Hero — Addons {prefix}{number}\n')
           PY
 
       - name: Read test release notes
-        id: notes
         run: |
           if [ -f TEST_NOTES.md ]; then
             cp TEST_NOTES.md test-release-notes.md
@@ -323,14 +276,13 @@ jobs:
           python - <<'PY'
           import json, os
           from pathlib import Path
-          p = Path("build/claim-your-hero-addons/module.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          tag = os.environ["TAG"]
-          version = tag[1:] if tag.startswith("v") else tag
-          data["version"] = version
-          data["manifest"] = "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json"
-          data["download"] = f"https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip"
-          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          p = Path('build/claim-your-hero-addons/module.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          tag = os.environ['TAG']
+          data['version'] = tag[1:].split('-testes.')[0]
+          data['manifest'] = 'https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json'
+          data['download'] = f'https://github.com/LHartKai/claim-your-hero-addons/releases/download/{tag}/claim-your-hero-addons.zip'
+          p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
           PY
           cd build
           zip -r ../claim-your-hero-addons.zip claim-your-hero-addons
