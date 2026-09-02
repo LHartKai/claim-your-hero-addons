@@ -170,6 +170,24 @@ function getRosterEntries() {
 }
 
 /**
+ * Update the visual/ARIA state of whichever class controls are currently rendered.
+ */
+function syncClassFilterControls(app) {
+  const selectedRoleId = classFilters.get(app) ?? null;
+  const root = app.element;
+  if (!root) return;
+
+  const controls = root.querySelectorAll(
+    `.${CLASS_FILTER_CLASS} [data-role-id], .composition-bar .comp-role[data-role-id]`
+  );
+  for (const control of controls) {
+    const active = control.dataset.roleId === selectedRoleId;
+    control.classList.toggle("active", active);
+    control.setAttribute("aria-pressed", active ? "true" : "false");
+  }
+}
+
+/**
  * Apply the currently selected class to the hero cards without modifying the main
  * Claim Your Hero application. `null` means show the complete roster.
  */
@@ -184,13 +202,7 @@ function applyClassFilter(app) {
     card.hidden = !visible;
   }
 
-  const filter = app.element?.querySelector(`.${CLASS_FILTER_CLASS}`);
-  if (filter) {
-    for (const button of filter.querySelectorAll("[data-role-id]")) {
-      button.classList.toggle("active", button.dataset.roleId === selectedRoleId);
-      button.setAttribute("aria-pressed", button.dataset.roleId === selectedRoleId ? "true" : "false");
-    }
-  }
+  syncClassFilterControls(app);
 
   // If the main app currently has a selected hero that disappeared from the filter,
   // close its detail panel so the visible selection remains consistent with the grid.
@@ -203,24 +215,76 @@ function applyClassFilter(app) {
 }
 
 /**
+ * Handle a class selection. Clicking the active class clears the filter; clicking
+ * another class replaces the current filter.
+ */
+function toggleClassFilter(app, roleId) {
+  const current = classFilters.get(app) ?? null;
+  classFilters.set(app, current === roleId ? null : roleId);
+  applyClassFilter(app);
+}
+
+/**
+ * Enhance the main module's recommended-composition roles with the same filter
+ * behavior as the independent class-search controls. Existing image, name,
+ * description, and covered/missing state remain untouched.
+ */
+function enhanceCompositionFilter(app, roles) {
+  const root = app.element;
+  const composition = root?.querySelector(".composition-bar");
+  if (!composition) return false;
+
+  const byName = new Map(roles.filter(r => r?.id && r.name).map(r => [r.name, r]));
+  for (const control of composition.querySelectorAll(".comp-role")) {
+    const name = control.querySelector(".comp-name")?.textContent?.trim();
+    const role = byName.get(name);
+    if (!role) continue;
+
+    control.dataset.roleId = role.id;
+    control.setAttribute("role", "button");
+    control.setAttribute("tabindex", "0");
+    control.setAttribute("aria-pressed", "false");
+    if (role.description) control.dataset.tooltip = role.description;
+
+    control.addEventListener("click", () => toggleClassFilter(app, role.id));
+    control.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      toggleClassFilter(app, role.id);
+    });
+  }
+
+  return true;
+}
+
+/**
  * Build the independent class-search strip. When the main module's recommended
- * composition exists, the filter sits immediately below it; otherwise it sits below
- * the header. The two controls remain completely independent.
+ * composition exists, that existing strip is enhanced instead and no second bar
+ * is rendered. Without a composition, the independent filter remains available.
  */
 function ensureClassFilter(app) {
   if (!app?.element || app?.options?.id !== `${CYH_ID}-selection`) return;
 
   const root = app.element;
-  let filter = root.querySelector(`.${CLASS_FILTER_CLASS}`);
-  if (filter) {
+  const roles = getClassCatalog();
+  if (!roles.length) return;
+
+  const composition = root.querySelector(".composition-bar");
+  const existingFilter = root.querySelector(`.${CLASS_FILTER_CLASS}`);
+
+  if (composition) {
+    existingFilter?.remove();
+    enhanceCompositionFilter(app, roles);
     applyClassFilter(app);
     return;
   }
 
-  const roles = getClassCatalog();
-  if (!roles.length) return;
+  if (existingFilter) {
+    applyClassFilter(app);
+    return;
+  }
 
-  filter = document.createElement("div");
+  const filter = document.createElement("div");
   filter.className = CLASS_FILTER_CLASS;
   filter.setAttribute("aria-label", "Filtro por classe");
 
@@ -254,21 +318,14 @@ function ensureClassFilter(app) {
     name.textContent = role.name;
     button.appendChild(name);
 
-    button.addEventListener("click", () => {
-      const current = classFilters.get(app) ?? null;
-      classFilters.set(app, current === role.id ? null : role.id);
-      applyClassFilter(app);
-    });
-
+    button.addEventListener("click", () => toggleClassFilter(app, role.id));
     buttons.appendChild(button);
   }
 
   filter.appendChild(buttons);
 
-  const composition = root.querySelector(".composition-bar");
   const header = root.querySelector(".stage-header");
-  if (composition) composition.after(filter);
-  else if (header) header.after(filter);
+  if (header) header.after(filter);
   else root.querySelector(".stage")?.prepend(filter);
 
   applyClassFilter(app);
