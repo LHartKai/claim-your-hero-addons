@@ -136,3 +136,31 @@ jobs:
             --title "Claim Your Hero — Addons $TAG" \
             --prerelease \
             --generate-notes
+
+      - name: Remove previous test prereleases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          TEST_VERSION: ${{ env.TEST_VERSION }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          base = os.environ["TEST_VERSION"]
+          current = os.environ["TAG"]
+          prefix = f"v{base}-testes."
+          legacy = f"v{base}-testes"
+
+          result = subprocess.run(
+              ["gh", "release", "list", "--limit", "100", "--json", "tagName,isPrerelease"],
+              check=True, capture_output=True, text=True
+          )
+          releases = json.loads(result.stdout)
+
+          for release in releases:
+              tag = release.get("tagName", "")
+              if not release.get("isPrerelease") or tag == current:
+                  continue
+              if tag == legacy or tag.startswith(prefix):
+                  print(f"Removing previous test prerelease: {tag}")
+                  subprocess.run(["gh", "release", "delete", tag, "--yes"], check=True)
+          PY
