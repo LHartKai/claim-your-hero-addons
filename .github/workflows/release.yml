@@ -1,6 +1,9 @@
 name: Release Foundry Module
 
 on:
+  push:
+    branches:
+      - testes
   release:
     types: [published]
   workflow_dispatch:
