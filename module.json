@@ -24,7 +24,8 @@
     ]
   },
   "esmodules": [
-    "scripts/main.js"
+    "scripts/main.js",
+    "scripts/localization.js"
   ],
   "styles": [
     "styles/main.css"
@@ -34,6 +35,11 @@
       "lang": "pt-BR",
       "name": "Portuguese (Brasil)",
       "path": "lang/pt-BR.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
     }
   ]
 }
