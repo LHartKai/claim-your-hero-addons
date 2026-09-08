@@ -37,8 +37,10 @@ jobs:
           mkdir -p build/claim-your-hero-addons/scripts build/claim-your-hero-addons/styles build/claim-your-hero-addons/lang
           cp module.json build/claim-your-hero-addons/module.json
           cp scripts/main.js build/claim-your-hero-addons/scripts/main.js
+          cp scripts/localization.js build/claim-your-hero-addons/scripts/localization.js
           cp styles/main.css build/claim-your-hero-addons/styles/main.css
           cp lang/pt-BR.json build/claim-your-hero-addons/lang/pt-BR.json
+          cp lang/en.json build/claim-your-hero-addons/lang/en.json
           python - <<'PY'
           import json, os
           from pathlib import Path
@@ -119,8 +121,10 @@ jobs:
           mkdir -p build/claim-your-hero-addons/scripts build/claim-your-hero-addons/styles build/claim-your-hero-addons/lang
           cp module.json build/claim-your-hero-addons/module.json
           cp scripts/main.js build/claim-your-hero-addons/scripts/main.js
+          cp scripts/localization.js build/claim-your-hero-addons/scripts/localization.js
           cp styles/main.css build/claim-your-hero-addons/styles/main.css
           cp lang/pt-BR.json build/claim-your-hero-addons/lang/pt-BR.json
+          cp lang/en.json build/claim-your-hero-addons/lang/en.json
           python - <<'PY'
           import json, os
           from pathlib import Path
@@ -239,8 +243,10 @@ jobs:
           mkdir -p build/claim-your-hero-addons/scripts build/claim-your-hero-addons/styles build/claim-your-hero-addons/lang
           cp module.json build/claim-your-hero-addons/module.json
           cp scripts/main.js build/claim-your-hero-addons/scripts/main.js
+          cp scripts/localization.js build/claim-your-hero-addons/scripts/localization.js
           cp styles/main.css build/claim-your-hero-addons/styles/main.css
           cp lang/pt-BR.json build/claim-your-hero-addons/lang/pt-BR.json
+          cp lang/en.json build/claim-your-hero-addons/lang/en.json
           python - <<'PY'
           import json, os
           from pathlib import Path
