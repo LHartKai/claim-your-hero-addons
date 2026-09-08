@@ -1,0 +1,12 @@
+{
+  "CLAIM_YOUR_HERO_ADDONS": {
+    "NAME": "Claim Your Hero — Addons"
+  },
+  "SETTINGS": {
+    "PERSISTENT_CLASS_SEARCH_NAME": "Persistent Role Search",
+    "PERSISTENT_CLASS_SEARCH_HINT": "When Recommended Composition is active, displays an additional bar with roles present in the roster that are not part of the recommended composition."
+  },
+  "CLASS_FILTER": {
+    "ARIA_LABEL": "Class filter"
+  }
+}
