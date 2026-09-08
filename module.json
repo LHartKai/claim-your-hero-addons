@@ -25,7 +25,8 @@
     ]
   },
   "esmodules": [
-    "scripts/main.js"
+    "scripts/main.js",
+    "scripts/composition-filter.js"
   ],
   "styles": [
     "styles/main.css"
