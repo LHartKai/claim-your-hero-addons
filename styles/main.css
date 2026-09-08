@@ -52,9 +52,9 @@
 
 .claim-your-hero-addons-class-filter .class-filter-role:hover,
 .claim-your-hero-addons-class-filter .class-filter-role.active {
-  border-color: var(--claim-your-hero-v13-351-accent);
-  color: var(--claim-your-hero-v13-351-accent);
-  box-shadow: 0 0 10px var(--claim-your-hero-v13-351-accent-glow);
+  border-color: var(--claim-your-hero-accent);
+  color: var(--claim-your-hero-accent);
+  box-shadow: 0 0 10px var(--claim-your-hero-accent-glow);
 }
 
 .claim-your-hero-addons-class-filter .class-filter-role.active {
@@ -82,22 +82,22 @@
 /* When the recommended composition is active, its existing controls become the
    class-filter controls. No duplicate image/name/description is rendered; the addon
    only adds interaction and the active-state treatment. */
-.claim-your-hero-v13-351.hero-selection .composition-bar .comp-role[data-role-id] {
+.claim-your-hero.hero-selection .composition-bar .comp-role[data-role-id] {
   cursor: pointer;
   transition: box-shadow 0.2s ease, background 0.2s ease, transform 0.15s ease;
 }
 
-.claim-your-hero-v13-351.hero-selection .composition-bar .comp-role[data-role-id]:hover,
-.claim-your-hero-v13-351.hero-selection .composition-bar .comp-role[data-role-id].active {
-  box-shadow: 0 0 10px var(--claim-your-hero-v13-351-accent-glow);
+.claim-your-hero.hero-selection .composition-bar .comp-role[data-role-id]:hover,
+.claim-your-hero.hero-selection .composition-bar .comp-role[data-role-id].active {
+  box-shadow: 0 0 10px var(--claim-your-hero-accent-glow);
   transform: translateY(-1px);
 }
 
-.claim-your-hero-v13-351.hero-selection .composition-bar .comp-role[data-role-id].active {
+.claim-your-hero.hero-selection .composition-bar .comp-role[data-role-id].active {
   background: var(--color-cool-5, #0b0a13);
 }
 
-.claim-your-hero-v13-351.hero-selection .composition-bar .comp-role[data-role-id]:focus-visible {
-  outline: 2px solid var(--claim-your-hero-v13-351-accent);
+.claim-your-hero.hero-selection .composition-bar .comp-role[data-role-id]:focus-visible {
+  outline: 2px solid var(--claim-your-hero-accent);
   outline-offset: 2px;
 }
