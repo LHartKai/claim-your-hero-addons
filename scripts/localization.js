@@ -11,7 +11,7 @@ function localizeSelectionFilters(app) {
 
   for (const filter of app.element?.querySelectorAll?.(`.${CLASS_FILTER_CLASS}`) ?? []) {
     const key = filter.classList.contains("persistent")
-      ? `${I18N_NAMESPACE}.SETTINGS.PERSISTENT_CLASS_SEARCH_NAME`
+      ? `${I18N_NAMESPACE}.PERSISTENT_CLASS_FILTER.ARIA_LABEL`
       : `${I18N_NAMESPACE}.CLASS_FILTER.ARIA_LABEL`;
 
     filter.setAttribute("aria-label", game.i18n.localize(key));
@@ -29,7 +29,13 @@ Hooks.once("ready", () => {
 Hooks.on("renderApplicationV2", app => {
   if (app?.options?.id !== "claim-your-hero-selection") return;
 
+  const root = app.element;
+  if (!root) return;
+
   // main.js creates the filter elements in its own render hook, so wait until
   // the current render cycle has completed before applying the translated labels.
   setTimeout(() => localizeSelectionFilters(app), 0);
+
+  const observer = new MutationObserver(() => localizeSelectionFilters(app));
+  observer.observe(root, { childList: true, subtree: true });
 });
