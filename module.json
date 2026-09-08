@@ -20,7 +20,7 @@
       {
         "id": "claim-your-hero",
         "type": "module",
-        "manifest": "https://github.com/LHartKai/claim-your-hero-fork/releases/download/v13.351/module.json"
+        "manifest": "https://raw.githubusercontent.com/LHartKai/claim-your-hero-fork/v13.351/module.json"
       }
     ]
   },
