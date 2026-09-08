@@ -1,5 +1,12 @@
 {
   "CLAIM_YOUR_HERO_ADDONS": {
     "NAME": "Claim Your Hero — Addons"
+  },
+  "SETTINGS": {
+    "PERSISTENT_CLASS_SEARCH_NAME": "Pesquisa por Função persistente",
+    "PERSISTENT_CLASS_SEARCH_HINT": "Quando a Composição Recomendada estiver ativa, exibe uma barra adicional com as funções existentes no roster que não fazem parte da composição recomendada."
+  },
+  "CLASS_FILTER": {
+    "ARIA_LABEL": "Filtro por classe"
   }
 }
