@@ -170,6 +170,18 @@ function getRosterEntries() {
 }
 
 /**
+ * Return only roles which are actually assigned to at least one roster entry.
+ * This keeps the independent search strip useful and prevents an empty search UI
+ * when the world has no heroes assigned to any role.
+ */
+function getAvailableClassRoles(roles) {
+  const assignedRoleIds = new Set(
+    getRosterEntries().flatMap(entry => entry?.roles ?? []).filter(Boolean)
+  );
+  return roles.filter(role => role?.id && role.name && assignedRoleIds.has(role.id));
+}
+
+/**
  * Update the visual/ARIA state of whichever class controls are currently rendered.
  */
 function syncClassFilterControls(app) {
@@ -260,7 +272,8 @@ function enhanceCompositionFilter(app, roles) {
 /**
  * Build the independent class-search strip. When the main module's recommended
  * composition exists, that existing strip is enhanced instead and no second bar
- * is rendered. Without a composition, the independent filter remains available.
+ * is rendered. Without a composition, the independent filter remains available,
+ * but only when at least one configured roster entry actually has a role.
  */
 function ensureClassFilter(app) {
   if (!app?.element || app?.options?.id !== `${CYH_ID}-selection`) return;
@@ -279,6 +292,14 @@ function ensureClassFilter(app) {
     return;
   }
 
+  const availableRoles = getAvailableClassRoles(roles);
+
+  if (!availableRoles.length) {
+    existingFilter?.remove();
+    classFilters.delete(app);
+    return;
+  }
+
   if (existingFilter) {
     applyClassFilter(app);
     return;
@@ -291,9 +312,7 @@ function ensureClassFilter(app) {
   const buttons = document.createElement("div");
   buttons.className = "class-filter-roles";
 
-  for (const role of roles) {
-    if (!role?.id || !role.name) continue;
-
+  for (const role of availableRoles) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "class-filter-role";
