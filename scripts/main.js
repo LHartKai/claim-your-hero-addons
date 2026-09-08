@@ -2,7 +2,7 @@
 // Sheet layering, pending-view synchronization, and independent class filtering.
 
 const MODULE_ID = "claim-your-hero-addons";
-const CYH_ID = "claim-your-hero-v13-351";
+const CYH_ID = "claim-your-hero";
 const CYH_FLAG = "pendingViews";
 const CYH_ROSTER_SETTING = "roster";
 const CYH_ROLES_SETTING = "roles";
