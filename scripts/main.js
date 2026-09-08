@@ -6,6 +6,7 @@ const CYH_ID = "claim-your-hero";
 const CYH_FLAG = "pendingViews";
 const CYH_ROSTER_SETTING = "roster";
 const CYH_ROLES_SETTING = "roles";
+const PERSISTENT_CLASS_SEARCH_SETTING = "persistentClassSearch";
 const SHEET_CLASS = "claim-your-hero-addons-sheet-layer";
 const SHEET_Z_INDEX = "10000";
 const CLASS_FILTER_CLASS = "claim-your-hero-addons-class-filter";
@@ -345,6 +346,90 @@ function ensureClassFilter(app) {
   applyClassFilter(app);
 }
 
+/**
+ * Build the optional persistent class-search strip that complements an active
+ * recommended composition. It reuses the same role availability rule as the
+ * normal class-search strip, but excludes every role currently displayed by the
+ * recommended composition.
+ */
+function ensurePersistentClassFilter(app) {
+  if (!app?.element || app?.options?.id !== `${CYH_ID}-selection`) return;
+
+  const root = app.element;
+  const existing = root.querySelector(`.${CLASS_FILTER_CLASS}.persistent`);
+  const enabled = game.settings.get(MODULE_ID, PERSISTENT_CLASS_SEARCH_SETTING) === true;
+  const composition = root.querySelector(".composition-bar");
+
+  if (!enabled || !composition) {
+    existing?.remove();
+    return;
+  }
+
+  const roles = getClassCatalog();
+  const availableRoles = getAvailableClassRoles(roles);
+  const compositionRoleIds = new Set(
+    [...composition.querySelectorAll(".comp-role[data-role-id]")]
+      .map(control => control.dataset.roleId)
+      .filter(Boolean)
+  );
+  const contextualRoles = availableRoles.filter(role => !compositionRoleIds.has(role.id));
+
+  if (!contextualRoles.length) {
+    existing?.remove();
+    return;
+  }
+
+  if (existing) {
+    applyClassFilter(app);
+    return;
+  }
+
+  const filter = document.createElement("div");
+  filter.className = `${CLASS_FILTER_CLASS} persistent`;
+  filter.setAttribute("aria-label", "Pesquisa por função persistente");
+
+  const buttons = document.createElement("div");
+  buttons.className = "class-filter-roles";
+
+  for (const role of contextualRoles) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "class-filter-role";
+    button.dataset.roleId = role.id;
+    button.setAttribute("aria-pressed", "false");
+    if (role.description) button.dataset.tooltip = role.description;
+
+    if (role.img) {
+      const img = document.createElement("img");
+      img.src = role.img;
+      img.alt = "";
+      button.appendChild(img);
+    }
+
+    const name = document.createElement("span");
+    name.className = "class-filter-name";
+    name.textContent = role.name;
+    button.appendChild(name);
+
+    button.addEventListener("click", () => toggleClassFilter(app, role.id));
+    buttons.appendChild(button);
+  }
+
+  filter.appendChild(buttons);
+  composition.after(filter);
+}
+
+Hooks.once("init", () => {
+  game.settings.register(MODULE_ID, PERSISTENT_CLASS_SEARCH_SETTING, {
+    name: "Pesquisa por Função persistente",
+    hint: "Quando a Composição Recomendada estiver ativa, exibe uma barra adicional com as funções existentes no roster que não fazem parte da composição recomendada.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+});
+
 Hooks.once("ready", async () => {
   console.log(`[${MODULE_ID}] Sheet layering, pending-view synchronization, and class filtering active.`);
 
@@ -361,6 +446,7 @@ Hooks.once("ready", async () => {
     }
     syncRosterViewerIndicators(app);
     ensureClassFilter(app);
+    ensurePersistentClassFilter(app);
   });
 
   Hooks.on("updateUser", async (user, changes) => {
