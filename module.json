@@ -2,7 +2,7 @@
   "id": "claim-your-hero-addons",
   "title": "Claim Your Hero — Addons",
   "description": "Addons and extensions developed specifically to work with the Claim Your Hero fork.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "compatibility": {
     "minimum": "13",
     "verified": "14.367"
@@ -14,7 +14,7 @@
   ],
   "url": "https://github.com/LHartKai/claim-your-hero-addons",
   "manifest": "https://github.com/LHartKai/claim-your-hero-addons/releases/latest/download/module.json",
-  "download": "https://github.com/LHartKai/claim-your-hero-addons/releases/download/v0.1.6-testes.7/claim-your-hero-addons.zip",
+  "download": "https://github.com/LHartKai/claim-your-hero-addons/releases/download/v0.1.7/claim-your-hero-addons.zip",
   "relationships": {
     "requires": [
       {
@@ -24,7 +24,8 @@
     ]
   },
   "esmodules": [
-    "scripts/main.js"
+    "scripts/main.js",
+    "scripts/localization.js"
   ],
   "styles": [
     "styles/main.css"
@@ -34,6 +35,11 @@
       "lang": "pt-BR",
       "name": "Portuguese (Brasil)",
       "path": "lang/pt-BR.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
     }
   ]
 }
