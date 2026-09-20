@@ -7,6 +7,7 @@ const CYH_FLAG = "pendingViews";
 const CYH_ROSTER_SETTING = "roster";
 const CYH_ROLES_SETTING = "roles";
 const PERSISTENT_CLASS_SEARCH_SETTING = "persistentClassSearch";
+const BACKGROUND_SIZE_SETTING = "backgroundSize";
 const SHEET_CLASS = "claim-your-hero-addons-sheet-layer";
 const SHEET_Z_INDEX = "10000";
 const CLASS_FILTER_CLASS = "claim-your-hero-addons-class-filter";
@@ -420,6 +421,26 @@ function ensurePersistentClassFilter(app) {
 }
 
 Hooks.once("init", () => {
+  game.settings.register(MODULE_ID, BACKGROUND_SIZE_SETTING, {
+    name: "CLAIM_YOUR_HERO_ADDONS.SETTINGS.BACKGROUND_SIZE_NAME",
+    hint: "CLAIM_YOUR_HERO_ADDONS.SETTINGS.BACKGROUND_SIZE_HINT",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      cover: "CLAIM_YOUR_HERO_ADDONS.SETTINGS.BACKGROUND_SIZE_CHOICES.COVER",
+      contain: "CLAIM_YOUR_HERO_ADDONS.SETTINGS.BACKGROUND_SIZE_CHOICES.CONTAIN",
+      auto: "CLAIM_YOUR_HERO_ADDONS.SETTINGS.BACKGROUND_SIZE_CHOICES.AUTO",
+      stretch: "CLAIM_YOUR_HERO_ADDONS.SETTINGS.BACKGROUND_SIZE_CHOICES.STRETCH"
+    },
+    default: "cover",
+    onChange: value => {
+      const mode = ["cover", "contain", "auto", "stretch"].includes(value) ? value : "cover";
+      document.documentElement.style.setProperty("--claim-your-hero-addons-background-size", mode);
+    }
+  });
+
+
   game.settings.register(MODULE_ID, PERSISTENT_CLASS_SEARCH_SETTING, {
     name: "Pesquisa por Função persistente",
     hint: "Quando a Composição Recomendada estiver ativa, exibe uma barra adicional com as funções existentes no roster que não fazem parte da composição recomendada.",
@@ -431,6 +452,11 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", async () => {
+  const backgroundSize = game.settings.get(MODULE_ID, BACKGROUND_SIZE_SETTING);
+  const mode = ["cover", "contain", "auto", "stretch"].includes(backgroundSize) ? backgroundSize : "cover";
+  document.documentElement.style.setProperty("--claim-your-hero-addons-background-size", mode);
+
+
   console.log(`[${MODULE_ID}] Sheet layering, pending-view synchronization, and class filtering active.`);
 
   if (game.user === game.users.activeGM) {
