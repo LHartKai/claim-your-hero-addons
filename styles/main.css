@@ -101,3 +101,9 @@
   outline: 2px solid var(--claim-your-hero-accent);
   outline-offset: 2px;
 }
+
+
+/* Background sizing override for the Claim Your Hero selection screen. */
+.claim-your-hero.hero-selection .stage-bg {
+  object-fit: var(--claim-your-hero-addons-background-size, cover);
+}
