@@ -3,7 +3,15 @@
     "NAME": "Claim Your Hero — Addons",
     "SETTINGS": {
       "PERSISTENT_CLASS_SEARCH_NAME": "Persistent Search-by-Function",
-      "PERSISTENT_CLASS_SEARCH_HINT": "If any characters on the roster have a role that isn't currently selected as recommended in the Recommended Composition menu, that role will appear below the recommendations during hero selection."
+      "PERSISTENT_CLASS_SEARCH_HINT": "If any characters on the roster have a role that isn't currently selected as recommended in the Recommended Composition menu, that role will appear below the recommendations during hero selection.",
+      "BACKGROUND_SIZE_NAME": "Background Size",
+      "BACKGROUND_SIZE_HINT": "Defines how the background image or video fills the selection screen.",
+      "BACKGROUND_SIZE_CHOICES": {
+        "COVER": "Cover — Fills and may crop",
+        "CONTAIN": "Contain — Keeps the whole image",
+        "AUTO": "Auto — Native size",
+        "STRETCH": "Stretch — Fills and may distort"
+      }
     },
     "CLASS_FILTER": {
       "ARIA_LABEL": "Class filter"
