@@ -182,3 +182,21 @@
   color: #e2bd68;
   text-align: center;
 }
+
+
+/* Reaction markers sit centered over the card's left gold frame. The opaque
+   player-colored circles cover the frame underneath, like the existing player marker. */
+.claim-your-hero-reaction-rail {
+  top: 50%;
+  right: auto;
+  left: 0;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  gap: 5px;
+}
+
+.claim-your-hero-reaction {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 27px;
+}
