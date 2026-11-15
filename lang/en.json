@@ -18,6 +18,18 @@
       "INTERESTED": "Interested",
       "NOT_WANTED": "Not wanted",
       "SAVE_ERROR": "Your reaction could not be saved. Please try again."
+    },
+    "TIEBREAK": {
+      "TITLE": "Tie-break for {name}",
+      "WAITING": "Tie-break in progress. Please wait for the GM.",
+      "ALLOW": "Allow claim",
+      "CLAIM_GRANTED": "The GM approved your claim.",
+      "NOT_SELECTED": "Another player was authorized for this character.",
+      "REASONS": {
+        "FAVORITE": "Favorite",
+        "UNIQUE_INTERESTED": "Only Interested character",
+        "SHEET_OPEN": "Sheet open"
+      }
     }
   }
 }
