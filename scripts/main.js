@@ -135,6 +135,14 @@ function getExplicitActorOwner(actor) {
   ) ?? null;
 }
 
+function setClaimedLabel(element, owner) {
+  const icon = document.createElement("i");
+  icon.className = "fa-solid fa-lock";
+  const label = document.createElement("span");
+  label.textContent = game.i18n.format("CYH.Selection.ClaimedBy", { name: owner.name });
+  element.replaceChildren(icon, document.createTextNode(" "), label);
+}
+
 /**
  * Make the selection UI reflect explicit Actor ownership even when the owner
  * has not linked that Actor as their current User.character.
@@ -156,11 +164,11 @@ function syncSelectionOwnership(app) {
     card.classList.remove("mine");
     if (banner) {
       banner.classList.remove("mine");
-      banner.innerHTML = `<i class="fa-solid fa-lock"></i> ${game.i18n.format("CYH.Selection.ClaimedBy", { name: owner.name })}`;
+      setClaimedLabel(banner, owner);
     } else {
       const claimed = document.createElement("div");
       claimed.className = "claimed-banner";
-      claimed.innerHTML = `<i class="fa-solid fa-lock"></i> ${game.i18n.format("CYH.Selection.ClaimedBy", { name: owner.name })}`;
+      setClaimedLabel(claimed, owner);
       card.appendChild(claimed);
     }
   }
@@ -176,7 +184,7 @@ function syncSelectionOwnership(app) {
   if (detailBody && !detailBody.querySelector(".claim-your-hero-addons-owned-notice")) {
     const notice = document.createElement("p");
     notice.className = "contested claim-your-hero-addons-owned-notice";
-    notice.innerHTML = `<i class="fa-solid fa-lock"></i> ${game.i18n.format("CYH.Selection.ClaimedBy", { name: selectedOwner.name })}`;
+    setClaimedLabel(notice, selectedOwner);
     detailBody.insertBefore(notice, detailBody.querySelector(".description"));
   }
 }
