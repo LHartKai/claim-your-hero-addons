@@ -377,10 +377,10 @@
   width: 76px;
   height: 76px;
   transform: translateX(-50%);
-  opacity: .18;
+  opacity: .24;
   pointer-events: none;
   background-color: #e2bd68;
-  -webkit-mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
+  -webkit-mask: url("modules/claim-your-hero-addons/assets/tiebreak-sword.png") center / contain no-repeat;
   mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
 }
 
@@ -392,7 +392,7 @@
   height: 190px;
   max-width: 72%;
   object-fit: cover;
-  object-position: center 28%;
+  object-position: center top;
   border: 1px solid rgba(217,173,72,.18);
   border-radius: 8px;
   background: rgba(0,0,0,.12);
