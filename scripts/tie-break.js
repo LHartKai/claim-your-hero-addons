@@ -262,6 +262,8 @@
     // Mirror that ephemeral state so the GM can arbitrate based on the selection UI,
     // not on whether an Actor sheet happens to be open.
     game.socket.on(`module.${CYH_ID}`, receive);
+    // Ask connected clients to re-announce their current selection when this addon starts.
+    game.socket.emit(`module.${CYH_ID}`, { type: "join", userId: game.user.id });
     Hooks.on("userConnected", (user, connected) => {
       if (!connected) selectedHeroes.delete(user.id);
     });
