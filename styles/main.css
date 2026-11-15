@@ -582,10 +582,12 @@
 
 .claim-your-hero-tiebreak-gm footer {
   display: grid;
-  grid-template-columns: 1fr 1fr 107px;
-  justify-content: stretch;
+  grid-template-columns: max-content minmax(max-content, 1fr) 107px;
+  justify-content: start;
   align-items: center;
   column-gap: .8rem;
+  width: 100%;
+  box-sizing: border-box;
   margin-top: .12rem;
   padding: .12rem .4rem 0;
   border-top: 0;
@@ -593,7 +595,7 @@
 
 .claim-your-hero-tiebreak-gm footer .claim-your-hero-tiebreak-cancel {
   grid-column: 3;
-  justify-self: end;
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   justify-content: center;
