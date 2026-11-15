@@ -46,7 +46,8 @@
   }
 
   function getUserReactions(user) {
-    return user?.getFlag(MODULE_ID, FLAG_KEY) ?? {};
+    const value = user?.getFlag(MODULE_ID, FLAG_KEY);
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
   }
 
   function getReactionLabel(reactionId) {
@@ -142,7 +143,11 @@
         if (reactions[actorId] === reaction.id) delete reactions[actorId];
         else reactions[actorId] = reaction.id;
         try {
-          await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
+          if (Object.keys(reactions).length === 0) {
+            await game.user.unsetFlag(MODULE_ID, FLAG_KEY);
+          } else {
+            await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
+          }
           closeMenu();
           refreshOpenSelectionScreens();
         } catch (error) {
@@ -154,8 +159,9 @@
     }
 
     document.body.appendChild(menu);
-    const left = Math.max(8, Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8));
-    const top = Math.max(8, Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8));
+    // Offset from the context-click point so the pointer does not hover Favorito on open.
+    const left = Math.max(8, Math.min(event.clientX + 14, window.innerWidth - menu.offsetWidth - 8));
+    const top = Math.max(8, Math.min(event.clientY + 14, window.innerHeight - menu.offsetHeight - 8));
     menu.style.left = `${left}px`;
     menu.style.top = `${top}px`;
     openMenu = menu;
