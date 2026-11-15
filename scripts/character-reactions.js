@@ -140,14 +140,13 @@
 
       button.addEventListener("click", async () => {
         const reactions = { ...getUserReactions(game.user) };
-        if (reactions[actorId] === reaction.id) delete reactions[actorId];
+        const isRemoving = reactions[actorId] === reaction.id;
+        if (isRemoving) delete reactions[actorId];
         else reactions[actorId] = reaction.id;
         try {
-          if (Object.keys(reactions).length === 0) {
-            await game.user.unsetFlag(MODULE_ID, FLAG_KEY);
-          } else {
-            await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
-          }
+          // Persist the complete map, including an empty object after removing
+          // the final reaction, avoiding stale nested flag data from unsetFlag.
+          await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
           closeMenu();
           refreshOpenSelectionScreens();
         } catch (error) {
