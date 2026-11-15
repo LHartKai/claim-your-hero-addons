@@ -29,6 +29,7 @@
         "FAVORITE": "Favorito",
         "UNIQUE_INTERESTED": "Único Interessado",
         "SHEET_OPEN": "Ficha aberta",
+        "SELECTED_IN_CLAIM": "Selecionado na tela de claims",
         "REQUESTER": "Solicitou o claim"
       }
     }
