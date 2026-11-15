@@ -44,7 +44,11 @@
   }
 
   function playerWaitingView(dispute) {
-    if (!(dispute.requesterIds ?? [dispute.requesterId]).includes(game.user.id) || game.user.isGM) return;
+    if (game.user.isGM) return;
+    const requesterIds = dispute.requesterIds ?? [dispute.requesterId];
+    const isRequester = requesterIds.includes(game.user.id);
+    const isContender = (dispute.players ?? []).some(player => player.userId === game.user.id);
+    if (!isRequester && !isContender) return;
     document.querySelector(".claim-your-hero-tiebreak-wait")?.remove();
     const panel = document.createElement("section");
     panel.className = "claim-your-hero-tiebreak-wait";
@@ -58,6 +62,9 @@
     panel.querySelector("h2").textContent = game.i18n.format(
       "CLAIM_YOUR_HERO_ADDONS.TIEBREAK.TITLE", { name: dispute.actorName }
     );
+    panel.querySelector("p").textContent = isRequester
+      ? game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.WAITING")
+      : game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.PARTICIPATING");
     const requesterSet = new Set(dispute.requesterIds ?? [dispute.requesterId]);
     for (const player of dispute.players.filter(item => item.userId !== game.user.id && !requesterSet.has(item.userId) && item.reason !== "requester")) {
       const avatar = document.createElement("span");
