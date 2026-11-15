@@ -338,3 +338,29 @@
   text-align: center;
   transform: translateY(-0.5px);
 }
+
+
+/* Center the actual Font Awesome glyph box, not just its inline element. */
+.claim-your-hero-reaction {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+.claim-your-hero-reaction > i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
