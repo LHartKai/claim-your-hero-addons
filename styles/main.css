@@ -506,6 +506,19 @@
 
 /* Keep claim buttons at their pre-table size (107px); cancel keeps its
    original intrinsic width and padding from the base GM button rules. */
+/* Give Allow claim the same hover glow/transition feedback as the cancel action. */
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button {
+  transition: border-color .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button:hover {
+  border-color: #e2bd68;
+  background: rgba(115, 82, 29, .82);
+  color: #fff1c9;
+  box-shadow: 0 0 8px rgba(226, 189, 104, .48), 0 0 15px rgba(226, 189, 104, .22);
+  filter: brightness(1.08);
+}
+
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button {
   flex: 0 0 107px;
   width: 107px;
