@@ -54,7 +54,8 @@
     panel.querySelector("h2").textContent = game.i18n.format(
       "CLAIM_YOUR_HERO_ADDONS.TIEBREAK.TITLE", { name: dispute.actorName }
     );
-    for (const player of dispute.players.filter(item => item.userId !== game.user.id)) {
+    const requesterSet = new Set(dispute.requesterIds ?? [dispute.requesterId]);
+    for (const player of dispute.players.filter(item => item.userId !== game.user.id && !requesterSet.has(item.userId) && item.reason !== "requester")) {
       const avatar = document.createElement("span");
       avatar.className = "claim-your-hero-tiebreak-avatar";
       avatar.style.setProperty("--player-color", player.color);
@@ -249,7 +250,8 @@
         if (!dispute.requesterIds.includes(data.userId)) {
           dispute.requesterIds.push(data.userId);
         }
-        dispute.players = [...new Map([...dispute.players, ...players].map(p => [p.userId, p])).values()];
+        const requesterSet = new Set(dispute.requesterIds);
+        dispute.players = [...new Map([...dispute.players, ...players].filter(p => !requesterSet.has(p.userId) && p.reason !== "requester").map(p => [p.userId, p])).values()];
         renderGMDispute(dispute);
         emit({ type: "created", dispute, from: game.user.id });
       }
