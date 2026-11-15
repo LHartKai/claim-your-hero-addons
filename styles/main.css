@@ -220,3 +220,11 @@
 .claim-your-hero-reaction.is-other-player {
   border-color: #c5c5c5;
 }
+
+
+/* Keep reaction outlines delicate while preserving their gold/silver identity. */
+.claim-your-hero-reaction,
+.claim-your-hero-reaction.is-current-player,
+.claim-your-hero-reaction.is-other-player {
+  border-width: 1px;
+}
