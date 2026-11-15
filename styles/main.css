@@ -449,7 +449,7 @@
 }
 
 
-/* GM arbitration table: compact, fixed columns with a small sword mark in the title. */
+/* GM arbitration table: content-sized columns; preserve original button dimensions. */
 .claim-your-hero-tiebreak-gm header {
   display: flex;
   align-items: center;
@@ -473,9 +473,10 @@
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns,
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player {
   display: grid;
-  grid-template-columns: minmax(105px, 1fr) minmax(145px, 1.25fr) 107px;
+  grid-template-columns: max-content max-content 107px;
   align-items: center;
-  column-gap: .55rem;
+  justify-content: space-between;
+  column-gap: .8rem;
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns {
@@ -497,9 +498,7 @@
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-name,
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-reason {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-width: max-content;
   white-space: nowrap;
 }
 
@@ -507,11 +506,17 @@
   text-align: center;
 }
 
+/* Keep claim buttons at their pre-table size (107px); cancel keeps its
+   original intrinsic width and padding from the base GM button rules. */
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button {
+  flex: 0 0 107px;
   width: 107px;
   min-width: 107px;
   max-width: 107px;
   justify-self: end;
+  padding: .35rem .4rem;
+  font-size: .78rem;
+  line-height: 1.1;
   white-space: nowrap;
 }
 
@@ -523,13 +528,6 @@
 @media (max-width: 520px) {
   .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns,
   .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player {
-    grid-template-columns: minmax(76px, .8fr) minmax(100px, 1fr) 92px;
-    column-gap: .3rem;
-  }
-  .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button {
-    width: 92px;
-    min-width: 92px;
-    max-width: 92px;
-    padding-inline: .2rem;
+    column-gap: .4rem;
   }
 }
