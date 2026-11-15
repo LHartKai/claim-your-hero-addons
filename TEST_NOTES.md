@@ -2,12 +2,12 @@
 
 ### Desempate por personagem
 - [x] Regras e fluxo especificados em `docs/TIEBREAK-DESIGN.md`.
-- [ ] Interceptar o claim antes de qualquer alteração de permissões.
-- [ ] Sincronizar interesses e fichas abertas entre clientes.
-- [ ] Criar interface de disputas independentes para GMs/Assistants GM.
-- [ ] Criar aviso de espera para o jogador solicitante.
-- [ ] Implementar autorização individual, de uso único e com revalidação.
-- [ ] Validar disputas simultâneas e encerramento independente.
+- [x] Interceptar o claim antes de qualquer alteração de permissões (validação inicial no GM ativo).
+- [x] Sincronizar reações e estado de ficha aberta por socket do addon.
+- [x] Criar janelas independentes por personagem para GMs/Assistants GM.
+- [x] Criar aviso de espera para o jogador solicitante.
+- [x] Implementar autorização individual por decisão direta do GM ativo, revalidando o claim original.
+- [ ] Validar disputas simultâneas e encerramento independente em Foundry multiplayer real.
 
 ### Validação pendente das reações aos personagens
 - Validar visualmente no Foundry VTT.
