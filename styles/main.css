@@ -236,3 +236,14 @@
 .claim-your-hero-reaction.is-other-player {
   box-shadow: none;
 }
+
+
+/* All reaction markers use the same compact size, regardless of owner. */
+.claim-your-hero-reaction,
+.claim-your-hero-reaction.is-current-player,
+.claim-your-hero-reaction.is-other-player {
+  width: 24px;
+  height: 24px;
+  flex-basis: 24px;
+  font-size: 12px;
+}
