@@ -28,7 +28,8 @@
       "REASONS": {
         "FAVORITE": "Favorite",
         "UNIQUE_INTERESTED": "Only Interested character",
-        "SHEET_OPEN": "Sheet open"
+        "SHEET_OPEN": "Sheet open",
+        "REQUESTER": "Claim requester"
       }
     }
   }
