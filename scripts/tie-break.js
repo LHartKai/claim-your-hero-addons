@@ -33,7 +33,7 @@
           otherActorId !== actorId && (value === "favorite" || value === "interested")
         );
         if (!hasOtherPriority) reason = "unique-interested";
-      } else if (!reaction && openSheets.get(user.id) === actorId) {
+      } else if (!reaction && openSheets.get(user.id)?.has(actorId)) {
         reason = "sheet-open";
       }
       if (reason) conflicts.push({
@@ -130,8 +130,14 @@
   function receive(payload) {
     if (!payload || payload.from === game.user.id) return;
     if (payload.type === "sheet") {
-      if (payload.open) openSheets.set(payload.userId, payload.actorId);
-      else if (openSheets.get(payload.userId) === payload.actorId) openSheets.delete(payload.userId);
+      if (payload.open) {
+        if (!openSheets.has(payload.userId)) openSheets.set(payload.userId, new Set());
+        openSheets.get(payload.userId).add(payload.actorId);
+      } else {
+        const opened = openSheets.get(payload.userId);
+        opened?.delete(payload.actorId);
+        if (opened?.size === 0) openSheets.delete(payload.userId);
+      }
     }
     if (payload.type === "created") {
       disputes.set(payload.dispute.id, payload.dispute);
@@ -158,6 +164,14 @@
   function announceSheet(app, open) {
     const actorId = app?.actor?.id;
     if (!actorId || game.user.isGM) return;
+    if (open) {
+      if (!openSheets.has(game.user.id)) openSheets.set(game.user.id, new Set());
+      openSheets.get(game.user.id).add(actorId);
+    } else {
+      const opened = openSheets.get(game.user.id);
+      opened?.delete(actorId);
+      if (opened?.size === 0) openSheets.delete(game.user.id);
+    }
     emit({ type: "sheet", userId: game.user.id, actorId, open, from: game.user.id });
   }
 
@@ -183,9 +197,8 @@
       if (!actor || !requester) return originalClaim(data);
 
       const players = findConflicts(data.userId, data.actorId);
-      if (!players.length) return originalClaim(data);
-
       let dispute = [...disputes.values()].find(item => item.actorId === data.actorId);
+      if (!players.length && !dispute) return originalClaim(data);
       if (!dispute) {
         dispute = {
           id: foundry.utils.randomID(), actorId: data.actorId, actorName: actor.name,
@@ -211,9 +224,7 @@
     Hooks.on("closeApplication", app => announceSheet(app, false));
     Hooks.on("userConnected", (user, connected) => {
       if (!connected) {
-        const actorId = openSheets.get(user.id);
         openSheets.delete(user.id);
-        if (actorId) emit({ type: "sheet", userId: user.id, actorId, open: false, from: game.user.id });
       }
     });
     console.log(`[${ADDON_ID}] Character tie-break arbitration ready.`);
