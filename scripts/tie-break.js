@@ -21,10 +21,10 @@
   const emit = payload => game.socket.emit(SOCKET, payload);
   const isActiveGM = () => game.user === game.users.activeGM;
 
-  function findConflicts(actorId) {
+  function findConflicts(actorId, requesterId) {
     const conflicts = [];
     for (const user of game.users) {
-      if (!user.active || user.isGM) continue;
+      if (!user.active || user.isGM || user.id === requesterId) continue;
       const reactions = getReactions(user);
       const reaction = reactions[actorId];
       const reactionEntries = Object.entries(reactions).filter(([, value]) =>
@@ -318,7 +318,18 @@
       const requester = game.users.get(data.userId);
       if (!actor || !requester) return originalClaim(data);
 
-      const players = findConflicts(data.actorId);
+      // Apply the same eligibility guards as Claim Your Hero before opening arbitration.
+      // A dispute is only valid for an available roster actor and a requester who has
+      // not already claimed a character.
+      const rosterEntry = game.settings.get(CYH_ID, "roster")?.entries
+        ?.find(entry => entry.actorId === data.actorId);
+      const alreadyClaimed = game.users.some(user =>
+        !user.isGM && user.id !== requester.id &&
+        (user.character?.id === actor.id || actor.getUserLevel(user) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
+      );
+      if (!rosterEntry || requester.character || alreadyClaimed) return originalClaim(data);
+
+      const players = findConflicts(data.actorId, requester.id);
       let dispute = [...disputes.values()].find(item => item.actorId === data.actorId);
       if (!players.length && !dispute) return originalClaim(data);
       if (!dispute) {
