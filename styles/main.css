@@ -489,12 +489,20 @@
   filter: brightness(0) saturate(100%) invert(82%) sepia(28%) saturate(672%) hue-rotate(5deg) brightness(95%) contrast(88%);
 }
 
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-table {
+  display: grid;
+  grid-template-columns: max-content minmax(max-content, 1fr) 107px;
+  column-gap: .8rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns,
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player {
   display: grid;
-  grid-template-columns: max-content max-content 107px;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
-  justify-content: start;
   column-gap: .8rem;
   width: 100%;
   box-sizing: border-box;
@@ -502,7 +510,6 @@
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns {
   padding: .35rem .4rem .45rem;
-  text-align: left;
   border-bottom: 1px solid rgba(255,255,255,.16);
   font-size: .88em;
   font-style: italic;
@@ -513,6 +520,8 @@
 
 .claim-your-hero-tiebreak-contenders {
   display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   gap: 0;
 }
 
@@ -521,37 +530,25 @@
   padding: .18rem .4rem;
   border-top: 0;
   border-bottom: 1px solid rgba(255,255,255,.12);
-  gap: .8rem;
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player:last-child {
-  /* Keep exactly one separator between the final contender and Cancel claim. */
   border-bottom: 1px solid rgba(255,255,255,.12);
 }
 
-.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-name,
-.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-reason {
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-name {
   min-width: max-content;
   white-space: nowrap;
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-reason {
+  min-width: 0;
   text-align: center;
+  white-space: nowrap;
 }
 
-/* Keep claim buttons at their pre-table size (107px); cancel keeps its
-   original intrinsic width and padding from the base GM button rules. */
-/* Give Allow claim the same hover glow/transition feedback as the cancel action. */
-.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button {
-  transition: border-color .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease, filter .2s ease;
-}
-
-.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button:hover {
-  border-color: #e2bd68;
-  background: rgba(115, 82, 29, .82);
-  color: #fff1c9;
-  box-shadow: 0 0 8px rgba(226, 189, 104, .48), 0 0 15px rgba(226, 189, 104, .22);
-  filter: brightness(1.08);
+.claim-your-hero-tiebreak-gm .claim-your-hero-claim-placeholder {
+  min-width: 0;
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button {
@@ -572,18 +569,28 @@
   word-spacing: normal;
   white-space: nowrap;
   text-align: center;
+  transition: border-color .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button:hover {
+  border-color: #e2bd68;
+  background: rgba(115, 82, 29, .82);
+  color: #fff1c9;
+  box-shadow: 0 0 8px rgba(226, 189, 104, .48), 0 0 15px rgba(226, 189, 104, .22);
+  filter: brightness(1.08);
 }
 
 .claim-your-hero-tiebreak-gm footer {
   display: grid;
-  grid-template-columns: max-content max-content 107px;
-  justify-content: space-between;
+  grid-template-columns: 1fr 1fr 107px;
+  justify-content: stretch;
   align-items: center;
   column-gap: .8rem;
   margin-top: .12rem;
   padding: .12rem .4rem 0;
   border-top: 0;
 }
+
 .claim-your-hero-tiebreak-gm footer .claim-your-hero-tiebreak-cancel {
   grid-column: 3;
   justify-self: end;
