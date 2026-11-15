@@ -170,7 +170,7 @@
       panel = document.createElement("section");
       panel.className = "claim-your-hero-tiebreak-gm";
       panel.dataset.tiebreakId = dispute.id;
-      panel.innerHTML = `<header><img class="claim-your-hero-tiebreak-gm-sword" alt=""><strong></strong></header><div class="claim-your-hero-tiebreak-table"><div class="claim-your-hero-tiebreak-columns"><span>Jogador</span><span>Nível de Interesse</span><span></span></div><div class="claim-your-hero-tiebreak-contenders"></div></div><footer><button type="button" class="claim-your-hero-tiebreak-cancel"></button></footer>`;
+      panel.innerHTML = `<header><img class="claim-your-hero-tiebreak-gm-sword" alt=""><strong></strong></header><div class="claim-your-hero-tiebreak-table"><div class="claim-your-hero-tiebreak-columns"><span>Jogador</span><span>Nível de Interesse</span><span></span></div><div class="claim-your-hero-tiebreak-contenders"></div><footer><button type="button" class="claim-your-hero-tiebreak-cancel"></button></footer></div>`;
       panel.querySelector(".claim-your-hero-tiebreak-gm-sword").src = swordAssetUrl();
       const openPanels = document.querySelectorAll(".claim-your-hero-tiebreak-gm").length;
       panel.style.top = (14 + openPanels * 4) + "vh";
