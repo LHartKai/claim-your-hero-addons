@@ -24,6 +24,8 @@
       "WAITING": "Tie-break in progress. Please wait for the GM.",
       "PARTICIPATING": "You are participating in this tie-break. Please wait for the GM.",
       "ALLOW": "Allow claim",
+      "CANCEL": "Cancel claim",
+      "CANCELLED": "The GM cancelled the claim.",
       "CLAIM_GRANTED": "The GM approved your claim.",
       "NOT_SELECTED": "Another player was authorized for this character.",
       "REASONS": {
