@@ -22,7 +22,7 @@
     "TIEBREAK": {
       "TITLE": "Desempate por {name}",
       "WAITING": "Desempate em andamento. Aguarde a decisão do GM.",
-      "PARTICIPATING": "Você está participando deste desempate. Aguarde a decisão do GM.",
+      "PARTICIPATING": "Você está participando de um desempate. Aguarde a decisão do GM.",
       "ALLOW": "Permitir claim",
       "CANCEL": "Cancelar claim",
       "CANCELLED": "O claim foi cancelado pelo GM.",
