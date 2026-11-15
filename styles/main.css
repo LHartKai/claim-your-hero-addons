@@ -284,3 +284,21 @@
   border: 2px solid var(--player-color); border-radius: 50%;
   background: var(--player-color); color: #fff; font-weight: 700;
 }
+
+/* Keep the arbitration action on one line without making it wider than the
+   standard selection buttons. The row can shrink its label before the button. */
+.claim-your-hero-tiebreak-player > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.claim-your-hero-tiebreak-gm button {
+  flex: 0 0 107px;
+  width: 107px;
+  min-width: 107px;
+  box-sizing: border-box;
+  padding: .35rem .4rem;
+  font-size: .78rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
