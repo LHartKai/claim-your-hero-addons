@@ -17,6 +17,7 @@
 
   const enhancedRoots = new WeakSet();
   let openMenu = null;
+  let openMenuCard = null;
 
   function getPlayerColor(user) {
     const color = user?.color;
@@ -108,10 +109,12 @@
 
   function closeMenu() {
     openMenu?.remove();
+    openMenuCard?.classList.remove("reaction-menu-open");
     openMenu = null;
+    openMenuCard = null;
   }
 
-  function openReactionMenu(event, actorId) {
+  function openReactionMenu(event, actorId, card) {
     closeMenu();
 
     const menu = document.createElement("div");
@@ -174,6 +177,8 @@
     menu.style.left = `${left}px`;
     menu.style.top = `${top}px`;
     openMenu = menu;
+    openMenuCard = card;
+    card.classList.add("reaction-menu-open");
 
     const dismiss = pointerEvent => {
       if (!menu.contains(pointerEvent.target)) closeMenu();
@@ -198,7 +203,7 @@
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
-    openReactionMenu(event, card.dataset.actorId);
+    openReactionMenu(event, card.dataset.actorId, card);
   }
 
   function enhanceSelection(app) {
