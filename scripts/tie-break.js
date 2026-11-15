@@ -44,7 +44,7 @@
   }
 
   function playerWaitingView(dispute) {
-    if (game.user.id !== dispute.requesterId || game.user.isGM) return;
+    if (!(dispute.requesterIds ?? [dispute.requesterId]).includes(game.user.id) || game.user.isGM) return;
     document.querySelector(".claim-your-hero-tiebreak-wait")?.remove();
     const panel = document.createElement("section");
     panel.className = "claim-your-hero-tiebreak-wait";
@@ -54,7 +54,7 @@
     panel.querySelector("h2").textContent = game.i18n.format(
       "CLAIM_YOUR_HERO_ADDONS.TIEBREAK.TITLE", { name: dispute.actorName }
     );
-    for (const player of dispute.players) {
+    for (const player of dispute.players.filter(item => item.userId !== game.user.id)) {
       const avatar = document.createElement("span");
       avatar.className = "claim-your-hero-tiebreak-avatar";
       avatar.style.setProperty("--player-color", player.color);
@@ -115,7 +115,7 @@
       result = await originalClaim({ userId: winnerId, actorId: dispute.actorId });
     } else if (user?.character) result = { ok: false, reason: "alreadyHas" };
 
-    emit({ type: "resolved", disputeId, actorId: dispute.actorId, requesterId: dispute.requesterId, winnerId, ok: !!result?.ok, from: game.user.id });
+    emit({ type: "resolved", disputeId, actorId: dispute.actorId, requesterId: dispute.requesterId, requesterIds: dispute.requesterIds ?? [dispute.requesterId], winnerId, ok: !!result?.ok, from: game.user.id });
     if (result?.ok) {
       game.socket.emit(`module.${CYH_ID}`, { type: "claimed", userId: winnerId, actorId: dispute.actorId });
     }
@@ -147,7 +147,7 @@
         ui.notifications.info(game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.CLAIM_GRANTED"));
         foundry.applications.instances.get(SELECTION_ID)?.close();
         game.actors.get(payload.actorId)?.sheet?.render({ force: true });
-      } else if (payload.requesterId === game.user.id && !game.user.isGM) {
+      } else if ((payload.requesterIds ?? [payload.requesterId]).includes(game.user.id) && !game.user.isGM) {
         ui.notifications.warn(game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.NOT_SELECTED"));
       }
       closeDispute(payload.disputeId);
@@ -189,12 +189,17 @@
       if (!dispute) {
         dispute = {
           id: foundry.utils.randomID(), actorId: data.actorId, actorName: actor.name,
-          requesterId: data.userId, players, createdAt: Date.now()
+          requesterId: data.userId, requesterIds: [data.userId], players: [...players, { userId: data.userId, name: requester.name, color: getColor(requester), reason: 'requester' }], createdAt: Date.now()
         };
         disputes.set(dispute.id, dispute);
         renderGMDispute(dispute);
         emit({ type: "created", dispute, from: game.user.id });
       } else {
+        if (!dispute.requesterIds) dispute.requesterIds = [dispute.requesterId];
+        if (!dispute.requesterIds.includes(data.userId)) {
+          dispute.requesterIds.push(data.userId);
+          dispute.players.push({ userId: data.userId, name: requester.name, color: getColor(requester), reason: 'requester' });
+        }
         dispute.players = [...new Map([...dispute.players, ...players].map(p => [p.userId, p])).values()];
         renderGMDispute(dispute);
         emit({ type: "created", dispute, from: game.user.id });
