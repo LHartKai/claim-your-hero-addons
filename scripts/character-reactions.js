@@ -167,25 +167,31 @@
     menu.querySelector("button")?.focus();
   }
 
+  function handleCharacterContextMenu(event) {
+    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+    const card = target?.closest(CARD_SELECTOR);
+    if (!card) return;
+
+    const root = card.closest(".claim-your-hero.hero-selection");
+    if (!root) return;
+
+    // Capture phase is intentional: the selection UI may stop contextmenu
+    // propagation on the card itself. Intercept before those handlers run.
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    openReactionMenu(event, card.dataset.actorId);
+  }
+
   function enhanceSelection(app) {
     if (app?.options?.id !== SELECTION_ID || !app.element) return;
-    const root = app.element;
-
-    if (!enhancedRoots.has(root)) {
-      root.addEventListener("contextmenu", event => {
-        const card = event.target.closest(CARD_SELECTOR);
-        if (!card || !root.contains(card)) return;
-        event.preventDefault();
-        event.stopPropagation();
-        openReactionMenu(event, card.dataset.actorId);
-      });
-      enhancedRoots.add(root);
-    }
-
-    renderReactionIndicators(root);
+    renderReactionIndicators(app.element);
   }
 
   Hooks.once("ready", () => {
+    // Listen on document in capture phase so inner card handlers cannot swallow
+    // the right-click before the reaction menu sees it.
+    document.addEventListener("contextmenu", handleCharacterContextMenu, true);
     Hooks.on("renderApplicationV2", enhanceSelection);
     Hooks.on("updateUser", refreshOpenSelectionScreens);
     console.log(`[${MODULE_ID}] Character reactions ready.`);
