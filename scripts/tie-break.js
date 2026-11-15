@@ -201,7 +201,15 @@
     if (!game.user.isGM && ui.notifications?.warn) {
       const warn = ui.notifications.warn.bind(ui.notifications);
       ui.notifications.warn = (message, ...args) => {
-        if (message === "CYH.Selection.Error.failed" && document.querySelector(".claim-your-hero-tiebreak-wait")) return;
+        if (message === "CYH.Selection.Error.failed") {
+          // The socket event that creates the persistent waiting panel can arrive
+          // just after the base module emits its generic claim-failure warning.
+          // Defer that warning briefly and discard it if arbitration is now visible.
+          window.setTimeout(() => {
+            if (!document.querySelector(".claim-your-hero-tiebreak-wait")) warn(message, ...args);
+          }, 700);
+          return;
+        }
         return warn(message, ...args);
       };
     }
