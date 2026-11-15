@@ -341,79 +341,85 @@
 }
 
 
-/* Player tie-break presentation: portrait, centered title/message/participants. */
+/* Compact player tie-break composition. Keep the sword strictly behind the title. */
 .claim-your-hero-tiebreak-wait {
   top: 50%;
   left: 50%;
-  width: min(560px, calc(100vw - 28px));
-  min-height: 500px;
-  max-height: min(86vh, 760px);
-  padding: 2rem 1.5rem 1.6rem;
+  width: min(440px, calc(100vw - 28px));
+  min-height: 0;
+  max-height: min(86vh, 680px);
+  padding: 1.15rem 1.25rem 1rem;
   overflow: hidden auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 1.15rem;
+  gap: .55rem;
   text-align: center;
   transform: translate(-50%, -50%);
   isolation: isolate;
-}
-
-.claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-sword {
-  position: absolute;
-  z-index: -1;
-  top: 12px;
-  left: 50%;
-  width: 150px;
-  height: 150px;
-  transform: translateX(-50%);
-  opacity: .18;
-  pointer-events: none;
-  background: #e2bd68;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='black' d='M240 22h32v154l48 48-20 20-28-28v76l-16 34-16-34v-76l-28 28-20-20 48-48V22zM214 304h84l42 150H172l42-150zM236 304v-36h40v36h-40z'/%3E%3C/svg%3E") center / contain no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='black' d='M240 22h32v154l48 48-20 20-28-28v76l-16 34-16-34v-76l-28 28-20-20 48-48V22zM214 304h84l42 150H172l42-150zM236 304v-36h40v36h-40z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .claim-your-hero-tiebreak-wait h2 {
   position: relative;
   z-index: 1;
   width: 100%;
-  margin: .35rem 0 .15rem;
+  margin: .15rem 0 .45rem;
   text-align: center;
   line-height: 1.2;
 }
 
+.claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-sword {
+  position: absolute;
+  z-index: 0;
+  top: .15rem;
+  left: 50%;
+  width: 76px;
+  height: 76px;
+  transform: translateX(-50%);
+  opacity: .17;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Portrait crop follows the selection-card artwork framing, without card badges,
+   reaction rails, labels or other selection decorations. */
 .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-portrait {
   display: block;
   width: 220px;
-  height: 220px;
-  max-width: 65%;
-  object-fit: contain;
-  object-position: center;
+  height: 190px;
+  max-width: 72%;
+  object-fit: cover;
+  object-position: center 28%;
   border: 1px solid rgba(217,173,72,.18);
-  border-radius: 10px;
-  background: rgba(0,0,0,.16);
-  box-shadow: 0 5px 18px rgba(0,0,0,.4);
+  border-radius: 8px;
+  background: rgba(0,0,0,.12);
+  box-shadow: 0 4px 14px rgba(0,0,0,.32);
 }
 
 .claim-your-hero-tiebreak-wait p {
   width: 100%;
-  margin: .25rem 0;
+  margin: .15rem 0 .2rem;
   text-align: center;
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-avatars {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   width: 100%;
   justify-content: center;
   align-items: center;
-  margin-top: auto;
-  padding-top: .8rem;
-  gap: .8rem;
+  margin: .2rem 0 0;
+  padding: 0;
+  gap: .55rem;
 }
 
 .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-avatar {
+  flex: 0 0 48px;
   width: 48px;
   height: 48px;
   font-size: 1.25rem;
@@ -421,16 +427,16 @@
 
 @media (max-width: 520px) {
   .claim-your-hero-tiebreak-wait {
-    min-height: 0;
-    padding: 1.3rem 1rem;
-    gap: .8rem;
+    padding: 1rem .85rem .85rem;
+    gap: .45rem;
   }
   .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-portrait {
-    width: 170px;
-    height: 170px;
+    width: 180px;
+    height: 160px;
   }
   .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-avatar {
-    width: 40px;
-    height: 40px;
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
   }
 }
