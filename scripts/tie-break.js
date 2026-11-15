@@ -11,7 +11,6 @@
   const SELECTION_ID = `${CYH_ID}-selection`;
   const disputes = new Map();
   const selectedHeroes = new Map();
-  const claimApprovals = new Map();
   let originalClaim = null;
 
   const getReactions = user => {
@@ -181,20 +180,6 @@
     if (payload.type === "cancel") closeDispute(payload.disputeId);
   }
 
-  function announceSheet(app, open) {
-    const actorId = (app?.actor ?? app?.document)?.id;
-    if (!actorId || game.user.isGM) return;
-    if (open) {
-      if (!openSheets.has(game.user.id)) openSheets.set(game.user.id, new Set());
-      openSheets.get(game.user.id).add(actorId);
-    } else {
-      const opened = openSheets.get(game.user.id);
-      opened?.delete(actorId);
-      if (opened?.size === 0) openSheets.delete(game.user.id);
-    }
-    emit({ type: "sheet", userId: game.user.id, actorId, open, from: game.user.id });
-  }
-
   Hooks.once("ready", () => {
     game.socket.on(SOCKET, receive);
     if (!game.user.isGM && ui.notifications?.warn) {
@@ -222,11 +207,6 @@
     }
     CONFIG.queries[QUERY] = async data => {
       if (!isActiveGM()) return originalClaim(data);
-      const approvalKey = `${data.actorId}:${data.userId}`;
-      if (claimApprovals.has(approvalKey)) {
-        claimApprovals.delete(approvalKey);
-        return originalClaim(data);
-      }
       const actor = game.actors.get(data.actorId);
       const requester = game.users.get(data.userId);
       if (!actor || !requester) return originalClaim(data);
