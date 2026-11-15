@@ -32,6 +32,7 @@
         "FAVORITE": "Favorito",
         "UNIQUE_FAVORITE": "Único personagem Favorito",
         "UNIQUE_INTERESTED": "Interessado apenas nesse personagem",
+        "INTERESTED": "Interessado",
         "SHEET_OPEN": "Ficha aberta",
         "SELECTED_IN_CLAIM": "Selecionado na tela de escolha",
         "REQUESTER": "Solicitou o claim"
