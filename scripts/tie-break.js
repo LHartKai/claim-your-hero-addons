@@ -5,7 +5,9 @@
   const CYH_ID = "claim-your-hero";
   const FLAG_KEY = "characterReactions";
   const QUERY = `${CYH_ID}.claim`;
-  const SOCKET = `module.${ADDON_ID}.tiebreak`;
+  // Foundry registers exactly one socket channel per module: module.<module-id>.
+  // Subchannels such as ".tiebreak" are not registered and silently drop broadcasts.
+  const SOCKET = `module.${ADDON_ID}`;
   const SELECTION_ID = `${CYH_ID}-selection`;
   const disputes = new Map();
   const selectedHeroes = new Map();
