@@ -7,6 +7,7 @@ const CYH_FLAG = "pendingViews";
 const CYH_ROSTER_SETTING = "roster";
 const CYH_ROLES_SETTING = "roles";
 const PERSISTENT_CLASS_SEARCH_SETTING = "persistentClassSearch";
+const ANONYMOUS_SELECTION_SETTING = "anonymousSelection";
 const SHEET_CLASS = "claim-your-hero-addons-sheet-layer";
 const SHEET_Z_INDEX = "10000";
 const CLASS_FILTER_CLASS = "claim-your-hero-addons-class-filter";
@@ -504,6 +505,15 @@ Hooks.once("init", () => {
   game.settings.register(MODULE_ID, PERSISTENT_CLASS_SEARCH_SETTING, {
     name: "Pesquisa por Função persistente",
     hint: "Quando a Composição Recomendada estiver ativa, exibe uma barra adicional com as funções existentes no roster que não fazem parte da composição recomendada.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register(MODULE_ID, ANONYMOUS_SELECTION_SETTING, {
+    name: "Seleção Anônima",
+    hint: "Oculta a identidade dos jogadores e suas reações para todos os jogadores. O GM continua vendo as identidades reais. A alteração é aplicada imediatamente.",
     scope: "world",
     config: true,
     type: Boolean,
