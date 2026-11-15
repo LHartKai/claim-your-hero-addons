@@ -11,7 +11,7 @@
   const SELECTION_ID = `${CYH_ID}-selection`;
   const swordAssetUrl = () => {
     const modulePath = game.modules.get(ADDON_ID)?.path || `modules/${ADDON_ID}`;
-    return `${modulePath.replace(/\\/$/, "")}/assets/tiebreak-sword.png`;
+    return `${modulePath.endsWith("/") ? modulePath.slice(0, -1) : modulePath}/assets/tiebreak-sword.png`;
   };
   const disputes = new Map();
   const selectedHeroes = new Map();
