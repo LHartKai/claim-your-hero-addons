@@ -1,13 +1,14 @@
 ## IN DEVELOPMENT
 
-<!-- Add the features being worked on in this version.
-Keep the tracker updated with progress, testing status, bugs and notes.
+### Desempate por personagem
+- [x] Regras e fluxo especificados em `docs/TIEBREAK-DESIGN.md`.
+- [ ] Interceptar o claim antes de qualquer alteração de permissões.
+- [ ] Sincronizar interesses e fichas abertas entre clientes.
+- [ ] Criar interface de disputas independentes para GMs/Assistants GM.
+- [ ] Criar aviso de espera para o jogador solicitante.
+- [ ] Implementar autorização individual, de uso único e com revalidação.
+- [ ] Validar disputas simultâneas e encerramento independente.
 
-Suggested status markers:
-- 🟢 Implemented / Working
-- 🟡 Testing
-- 🔧 In progress
-- 🐛 Bug
-- ⚠️ Needs attention
-- 🔴 Blocked
--->
+### Validação pendente das reações aos personagens
+- Validar visualmente no Foundry VTT.
+- Testar sincronização das reações em sessão multiplayer real.
