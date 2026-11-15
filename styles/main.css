@@ -580,10 +580,10 @@
   filter: brightness(1.08);
 }
 
-.claim-your-hero-tiebreak-gm footer {
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-table > footer {
   display: grid;
-  grid-template-columns: max-content minmax(max-content, 1fr) 107px;
-  justify-content: start;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
   column-gap: .8rem;
   width: 100%;
@@ -593,7 +593,7 @@
   border-top: 0;
 }
 
-.claim-your-hero-tiebreak-gm footer .claim-your-hero-tiebreak-cancel {
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-table > footer .claim-your-hero-tiebreak-cancel {
   grid-column: 3;
   justify-self: start;
   display: inline-flex;
