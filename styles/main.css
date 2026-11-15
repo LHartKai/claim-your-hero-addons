@@ -437,6 +437,10 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, .7);
 }
 
+.claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-avatar.is-self {
+  border-color: var(--claim-your-hero-accent, #d9ad48);
+}
+
 @media (max-width: 520px) {
   .claim-your-hero-tiebreak-wait {
     padding: 1rem .85rem .85rem;
