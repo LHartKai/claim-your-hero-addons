@@ -264,3 +264,16 @@
 .claim-your-hero-reaction.is-current-player {
   border-color: var(--claim-your-hero-accent, #d9ad48);
 }
+
+
+/* Keep the reaction menu neutral on keyboard autofocus; only hover gets an accent. */
+.claim-your-hero-reaction-option:focus,
+.claim-your-hero-reaction-option:focus-visible {
+  border-color: transparent;
+  background: transparent;
+  outline: none;
+}
+.claim-your-hero-reaction-option:hover {
+  border-color: #b88d3c;
+  background: rgba(184, 141, 60, 0.18);
+}
