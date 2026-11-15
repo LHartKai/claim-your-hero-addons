@@ -29,6 +29,7 @@
         "FAVORITE": "Favorite",
         "UNIQUE_INTERESTED": "Only Interested character",
         "SHEET_OPEN": "Sheet open",
+        "SELECTED_IN_CLAIM": "Selected in claim screen",
         "REQUESTER": "Claim requester"
       }
     }
