@@ -18,6 +18,18 @@
       "INTERESTED": "Interessado",
       "NOT_WANTED": "Não quero",
       "SAVE_ERROR": "Não foi possível salvar sua reação. Tente novamente."
+    },
+    "TIEBREAK": {
+      "TITLE": "Desempate por {name}",
+      "WAITING": "Desempate em andamento. Aguarde a decisão do GM.",
+      "ALLOW": "Permitir claim",
+      "CLAIM_GRANTED": "O GM autorizou seu claim.",
+      "NOT_SELECTED": "Outro jogador recebeu autorização para este personagem.",
+      "REASONS": {
+        "FAVORITE": "Favorito",
+        "UNIQUE_INTERESTED": "Único Interessado",
+        "SHEET_OPEN": "Ficha aberta"
+      }
     }
   }
 }
