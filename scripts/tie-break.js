@@ -33,10 +33,12 @@
       const favoriteCount = reactionEntries.filter(([, value]) => value === "favorite").length;
       let reason = null;
 
-      // Priority 1: interested in exactly one character (this one).
-      if (reaction === "interested" && reactionEntries.length === 1) {
+      // Priority 1: this is the only character with any reaction,
+      // whether that single reaction is "interested" or "favorite".
+      if ((reaction === "interested" || reaction === "favorite") && reactionEntries.length === 1) {
         reason = "unique-interested";
-      // Priority 2: this is the player's only favorite, regardless of interests.
+      // Priority 2: this is the player's only favorite, even if they have
+      // interests on other characters.
       } else if (reaction === "favorite" && favoriteCount === 1) {
         reason = "unique-favorite";
       // Priority 3: favorite, when the player has multiple favorites.
