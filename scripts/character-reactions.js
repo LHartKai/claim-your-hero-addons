@@ -15,7 +15,6 @@
     { id: "not-wanted", icon: "fa-xmark", label: "NOT_WANTED" }
   ];
 
-  const enhancedRoots = new WeakSet();
   let openMenu = null;
   let openMenuCard = null;
 
@@ -87,10 +86,24 @@
   }
 
   function closeMenu() {
-    openMenu?.remove();
+    if (!openMenu) return;
+    document.removeEventListener("pointerdown", dismissOpenMenu);
+    document.removeEventListener("keydown", handleMenuKeydown);
+    openMenu.remove();
     openMenuCard?.classList.remove("reaction-menu-open");
     openMenu = null;
     openMenuCard = null;
+  }
+
+  function dismissOpenMenu(event) {
+    if (openMenu && !openMenu.contains(event.target)) closeMenu();
+  }
+
+  function handleMenuKeydown(event) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeMenu();
+    }
   }
 
   function openReactionMenu(event, actorId, card) {
@@ -159,14 +172,8 @@
     openMenuCard = card;
     card.classList.add("reaction-menu-open");
 
-    const dismiss = pointerEvent => {
-      if (!menu.contains(pointerEvent.target)) closeMenu();
-    };
-    const escape = keyEvent => {
-      if (keyEvent.key === "Escape") closeMenu();
-    };
-    document.addEventListener("pointerdown", dismiss, { once: true });
-    document.addEventListener("keydown", escape, { once: true });
+    document.addEventListener("pointerdown", dismissOpenMenu);
+    document.addEventListener("keydown", handleMenuKeydown);
   }
 
   function handleCharacterContextMenu(event) {
