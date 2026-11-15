@@ -259,11 +259,25 @@ function enhanceCompositionFilter(app, roles) {
     control.setAttribute("aria-pressed", "false");
     if (role.description) control.dataset.tooltip = role.description;
 
-    control.addEventListener("click", () => toggleClassFilter(app, role.id));
-    control.addEventListener("keydown", event => {
+  }
+
+  // Delegate once per composition bar. The bar can be enhanced again after a
+  // rerender; binding each child repeatedly would accumulate click/keydown handlers.
+  if (composition.dataset.addonFilterBound !== "true") {
+    composition.dataset.addonFilterBound = "true";
+    const activate = control => {
+      const roleId = control?.dataset.roleId;
+      if (roleId) toggleClassFilter(app, roleId);
+    };
+    composition.addEventListener("click", event => {
+      activate(event.target.closest(".comp-role[data-role-id]"));
+    });
+    composition.addEventListener("keydown", event => {
       if (event.key !== "Enter" && event.key !== " ") return;
+      const control = event.target.closest(".comp-role[data-role-id]");
+      if (!control) return;
       event.preventDefault();
-      toggleClassFilter(app, role.id);
+      activate(control);
     });
   }
 
