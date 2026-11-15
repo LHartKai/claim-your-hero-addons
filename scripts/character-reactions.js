@@ -141,12 +141,22 @@
       button.addEventListener("click", async () => {
         const reactions = { ...getUserReactions(game.user) };
         const isRemoving = reactions[actorId] === reaction.id;
-        if (isRemoving) delete reactions[actorId];
-        else reactions[actorId] = reaction.id;
         try {
-          // Persist the complete map, including an empty object after removing
-          // the final reaction, avoiding stale nested flag data from unsetFlag.
-          await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
+          if (isRemoving) {
+            // Foundry merges object flags recursively; setFlag with a map that
+            // omits actorId does not delete that nested key. Use -= deletion.
+            await game.user.update({
+              [`flags.${MODULE_ID}.${FLAG_KEY}.-=${actorId}`]: null
+            });
+            const remaining = { ...reactions };
+            delete remaining[actorId];
+            if (Object.keys(remaining).length === 0) {
+              await game.user.unsetFlag(MODULE_ID, FLAG_KEY);
+            }
+          } else {
+            reactions[actorId] = reaction.id;
+            await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
+          }
           closeMenu();
           refreshOpenSelectionScreens();
         } catch (error) {
