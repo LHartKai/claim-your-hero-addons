@@ -76,8 +76,11 @@
       panel = document.createElement("section");
       panel.className = "claim-your-hero-tiebreak-gm";
       panel.dataset.tiebreakId = dispute.id;
-      panel.innerHTML = `<header><strong></strong><button type="button" aria-label="Close">×</button></header><p></p><div class="claim-your-hero-tiebreak-contenders"></div>`;
-      panel.querySelector("header button").addEventListener("click", () => panel.remove());
+      panel.innerHTML = `<header><strong></strong></header><p></p><div class="claim-your-hero-tiebreak-contenders"></div>`;
+      const openPanels = document.querySelectorAll(".claim-your-hero-tiebreak-gm").length;
+      panel.style.top = (14 + openPanels * 4) + "vh";
+      panel.style.right = (18 + (openPanels % 3) * 18) + "px";
+      panel.style.zIndex = String(10050 + openPanels);
       document.body.append(panel);
     }
     panel.querySelector("header strong").textContent = `Desempate — ${dispute.actorName}`;
