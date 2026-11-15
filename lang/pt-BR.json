@@ -14,7 +14,7 @@
     "REACTIONS": {
       "RAIL_LABEL": "Reações dos jogadores",
       "MENU_LABEL": "Escolher reação para este personagem",
-      "FAVORITE": "Favorito",
+      "FAVORITE": "Um dos Favoritos",
       "INTERESTED": "Interessado",
       "NOT_WANTED": "Não quero",
       "SAVE_ERROR": "Não foi possível salvar sua reação. Tente novamente."
