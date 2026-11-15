@@ -377,11 +377,10 @@
   width: 88px;
   height: 88px;
   transform: translateX(-50%);
-  opacity: .32;
+  object-fit: contain;
+  opacity: .18;
+  filter: sepia(1) saturate(1.4) hue-rotate(355deg);
   pointer-events: none;
-  background-color: #e2bd68;
-  -webkit-mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
-  mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
 }
 
 /* Portrait crop follows the selection-card artwork framing, without card badges,
@@ -464,10 +463,9 @@
   flex: 0 0 1.35em;
   width: 1.35em;
   height: 1.35em;
-  background: #e2bd68;
+  object-fit: contain;
   opacity: .8;
-  -webkit-mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
-  mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
+  filter: sepia(1) saturate(1.4) hue-rotate(355deg);
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns,
