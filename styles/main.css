@@ -447,3 +447,89 @@
   background: #14100d !important;
   z-index: 10001 !important;
 }
+
+
+/* GM arbitration table: compact, fixed columns with a small sword mark in the title. */
+.claim-your-hero-tiebreak-gm header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  margin-bottom: .8rem;
+  text-align: center;
+}
+
+.claim-your-hero-tiebreak-gm-sword {
+  display: inline-block;
+  flex: 0 0 1.35em;
+  width: 1.35em;
+  height: 1.35em;
+  background: #e2bd68;
+  opacity: .8;
+  -webkit-mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
+  mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
+}
+
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns,
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player {
+  display: grid;
+  grid-template-columns: minmax(105px, 1fr) minmax(145px, 1.25fr) 107px;
+  align-items: center;
+  column-gap: .55rem;
+}
+
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns {
+  padding: .35rem .4rem .45rem;
+  border-bottom: 1px solid rgba(255,255,255,.16);
+  font-size: .88em;
+  font-style: italic;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player {
+  min-width: 0;
+  padding: .45rem .4rem;
+  border-top: 0;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-name,
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-reason {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-reason {
+  text-align: center;
+}
+
+.claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button {
+  width: 107px;
+  min-width: 107px;
+  max-width: 107px;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.claim-your-hero-tiebreak-gm footer {
+  margin-top: .45rem;
+  padding-top: .45rem;
+}
+
+@media (max-width: 520px) {
+  .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns,
+  .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player {
+    grid-template-columns: minmax(76px, .8fr) minmax(100px, 1fr) 92px;
+    column-gap: .3rem;
+  }
+  .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player > button {
+    width: 92px;
+    min-width: 92px;
+    max-width: 92px;
+    padding-inline: .2rem;
+  }
+}
