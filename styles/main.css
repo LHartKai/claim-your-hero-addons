@@ -299,75 +299,33 @@
 }
 
 
-/* Center Font Awesome glyphs precisely inside the compact reaction circles. */
+
+/* Single, authoritative layout for reaction badges and their Font Awesome glyphs. */
 .claim-your-hero-reaction {
+  position: relative;
   display: inline-flex;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
   align-items: center;
   justify-content: center;
   padding: 0;
   line-height: 1;
+  vertical-align: middle;
 }
 
 .claim-your-hero-reaction > i {
-  display: block;
+  position: static;
+  display: inline-flex;
+  flex: 0 0 auto;
   width: 1em;
   height: 1em;
-  margin: 0;
-  line-height: 1;
-  text-align: center;
-}
-
-
-/* Optical centering for Font Awesome reaction glyphs in the small circular badges. */
-.claim-your-hero-reaction {
-  display: grid;
-  place-items: center;
-  padding: 0 !important;
-  line-height: 1 !important;
-  text-align: center;
-}
-
-.claim-your-hero-reaction > i {
-  display: block;
-  width: auto !important;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1 !important;
-  font-size: 12px;
-  text-align: center;
-  transform: translateY(-0.5px);
-}
-
-
-/* Center the actual Font Awesome glyph box, not just its inline element. */
-.claim-your-hero-reaction {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  text-align: center !important;
-}
-
-.claim-your-hero-reaction > i {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex !important;
   align-items: center;
   justify-content: center;
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1 !important;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
   text-align: center;
-  transform: translate(-50%, -50%);
-}
-
-
-/* Keep the owning character card highlighted while its reaction menu is open. */
-.claim-your-hero.hero-selection .hero-card[data-actor-id].reaction-menu-open {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 0 22px var(--claim-your-hero-accent-glow);
+  transform: none;
 }
