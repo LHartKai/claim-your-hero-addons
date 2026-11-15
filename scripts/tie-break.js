@@ -76,11 +76,18 @@
     Object.assign(panel.style, { position: "fixed", zIndex: "9997", top: "18%", left: "50%", transform: "translateX(-50%)" });
     panel.style.setProperty("z-index", "9997", "important");
     panel.innerHTML = `
-      <h2></h2><p>${game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.WAITING")}</p>
+      <div class="claim-your-hero-tiebreak-sword" aria-hidden="true"></div>
+      <h2></h2>
+      <img class="claim-your-hero-tiebreak-portrait" alt="">
+      <p></p>
       <div class="claim-your-hero-tiebreak-avatars"></div>`;
     panel.querySelector("h2").textContent = game.i18n.format(
       "CLAIM_YOUR_HERO_ADDONS.TIEBREAK.TITLE", { name: dispute.actorName }
     );
+    const actor = game.actors.get(dispute.actorId);
+    const portrait = panel.querySelector(".claim-your-hero-tiebreak-portrait");
+    portrait.src = actor?.img || "";
+    portrait.alt = dispute.actorName || "";
     // Requesters and contenders receive the same waiting message.
     panel.querySelector("p").textContent = game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.WAITING");
 
