@@ -326,3 +326,16 @@
   border-color: #e28b78;
   background: rgba(125, 48, 38, .85);
 }
+
+/* Center participant icons in the player waiting panel. */
+.claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-avatars {
+  justify-content: center;
+  align-items: center;
+}
+
+/* Clear drag affordance for both player and GM panels. */
+.claim-your-hero-tiebreak-wait h2,
+.claim-your-hero-tiebreak-gm header {
+  cursor: move;
+  user-select: none;
+}
