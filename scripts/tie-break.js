@@ -88,7 +88,7 @@
       panel = document.createElement("section");
       panel.className = "claim-your-hero-tiebreak-gm";
       panel.dataset.tiebreakId = dispute.id;
-      panel.innerHTML = `<header><strong></strong></header><p></p><div class="claim-your-hero-tiebreak-requester"></div><div class="claim-your-hero-tiebreak-contenders"></div>`;
+      panel.innerHTML = `<header><strong></strong></header><p></p><div class="claim-your-hero-tiebreak-contenders"></div>`;
       const openPanels = document.querySelectorAll(".claim-your-hero-tiebreak-gm").length;
       panel.style.top = (14 + openPanels * 4) + "vh";
       panel.style.right = (18 + (openPanels % 3) * 18) + "px";
@@ -101,22 +101,6 @@
     const contenders = (dispute.players ?? []).filter(player => !requesterSet.has(player.userId) && player.reason !== "requester");
     const requesterNames = requesterIds.map(id => game.users.get(id)?.name ?? "Jogador");
     panel.querySelector("p").textContent = `Solicitante(s): ${requesterNames.join(", ")}`;
-    const requesterList = panel.querySelector(".claim-your-hero-tiebreak-requester");
-    requesterList.replaceChildren();
-    for (const requesterId of requesterIds) {
-      const requester = game.users.get(requesterId);
-      if (!requester) continue;
-      const row = document.createElement("div");
-      row.className = "claim-your-hero-tiebreak-player is-requester";
-      const label = document.createElement("span");
-      label.textContent = `${requester.name} — Solicitante`;
-      const allow = document.createElement("button");
-      allow.type = "button";
-      allow.textContent = game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.ALLOW");
-      allow.addEventListener("click", () => decide(dispute.id, requesterId));
-      row.append(label, allow);
-      requesterList.append(row);
-    }
     const list = panel.querySelector(".claim-your-hero-tiebreak-contenders");
     list.replaceChildren();
     for (const player of contenders) {
