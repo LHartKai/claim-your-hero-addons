@@ -81,16 +81,29 @@
     panel.querySelector("h2").textContent = game.i18n.format(
       "CLAIM_YOUR_HERO_ADDONS.TIEBREAK.TITLE", { name: dispute.actorName }
     );
-    panel.querySelector("p").textContent = isRequester
-      ? game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.WAITING")
-      : game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.PARTICIPATING");
-    const requesterSet = new Set(dispute.requesterIds ?? [dispute.requesterId]);
-    for (const player of dispute.players.filter(item => item.userId !== game.user.id && !requesterSet.has(item.userId) && item.reason !== "requester")) {
+    // Requesters and contenders receive the same waiting message.
+    panel.querySelector("p").textContent = game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.WAITING");
+
+    // Show every participant on every client, including the requester and
+    // the local player, so all involved users see the same participant icons.
+    const participants = new Map();
+    for (const player of dispute.players ?? []) participants.set(player.userId, player);
+    for (const userId of dispute.requesterIds ?? [dispute.requesterId]) {
+      if (!participants.has(userId)) {
+        const user = game.users.get(userId);
+        if (user) participants.set(userId, {
+          userId, name: user.name, color: getColor(user), reason: null
+        });
+      }
+    }
+    for (const player of participants.values()) {
       const avatar = document.createElement("span");
       avatar.className = "claim-your-hero-tiebreak-avatar";
-      avatar.style.setProperty("--player-color", player.color);
-      avatar.textContent = player.name.slice(0, 1).toUpperCase();
-      avatar.title = `${player.name} — ${reasonLabel(player.reason)}`;
+      avatar.style.setProperty("--player-color", player.color || "#888888");
+      avatar.textContent = (player.name || "?").slice(0, 1).toUpperCase();
+      avatar.title = player.reason
+        ? `${player.name} — ${reasonLabel(player.reason)}`
+        : player.name;
       panel.querySelector(".claim-your-hero-tiebreak-avatars").append(avatar);
     }
     document.body.append(panel);
