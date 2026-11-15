@@ -85,8 +85,12 @@
       "CLAIM_YOUR_HERO_ADDONS.TIEBREAK.TITLE", { name: dispute.actorName }
     );
     const actor = game.actors.get(dispute.actorId);
+    const rosterEntry = game.settings.get(CYH_ID, "roster")?.entries
+      ?.find(entry => entry.actorId === dispute.actorId);
     const portrait = panel.querySelector(".claim-your-hero-tiebreak-portrait");
-    portrait.src = actor?.img || "";
+    // Match the selection card's exact source and crop: roster entry image first,
+    // then Actor.img, with the card's center-top framing.
+    portrait.src = rosterEntry?.img || actor?.img || "";
     portrait.alt = dispute.actorName || "";
     // Requesters and contenders receive the same waiting message.
     panel.querySelector("p").textContent = game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.WAITING");
