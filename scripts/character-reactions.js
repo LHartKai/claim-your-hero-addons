@@ -25,26 +25,6 @@
     return color?.css ?? color?.toString?.() ?? "#777777";
   }
 
-  function getContrastColor(color) {
-    let rgb = null;
-    const hex = String(color).match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
-    if (hex) {
-      let value = hex[1];
-      if (value.length === 3) value = [...value].map(char => char + char).join("");
-      rgb = [0, 2, 4].map(index => parseInt(value.slice(index, index + 2), 16));
-    } else {
-      const match = String(color).match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
-      if (match) rgb = match.slice(1, 4).map(Number);
-    }
-
-    if (!rgb) return "#ffffff";
-    const [r, g, b] = rgb.map(value => {
-      const channel = value / 255;
-      return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-    });
-    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    return luminance > 0.42 ? "#111111" : "#ffffff";
-  }
 
   function getUserReactions(user) {
     const value = user?.getFlag(MODULE_ID, FLAG_KEY);
@@ -64,7 +44,6 @@
     const badge = document.createElement("span");
     badge.className = `claim-your-hero-reaction${user.id === game.user.id ? " is-current-player" : " is-other-player"}`;
     badge.style.setProperty("--reaction-player-color", color);
-    badge.style.setProperty("--reaction-icon-color", getContrastColor(color));
     badge.dataset.userId = user.id;
     badge.dataset.reaction = reactionId;
     badge.title = `${user.name} — ${getReactionLabel(reactionId)}`;
