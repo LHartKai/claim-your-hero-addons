@@ -372,7 +372,7 @@
 .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-sword {
   position: absolute;
   z-index: 0;
-  top: .05rem;
+  top: .2rem;
   left: 50%;
   width: 88px;
   height: 88px;
@@ -466,7 +466,7 @@
   height: 1.35em;
   object-fit: contain;
   opacity: .8;
-  filter: sepia(1) saturate(1.4) hue-rotate(355deg);
+  filter: brightness(0) saturate(100%) invert(82%) sepia(28%) saturate(672%) hue-rotate(5deg) brightness(95%) contrast(88%);
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns,
@@ -492,7 +492,7 @@
   min-width: 0;
   padding: .3rem .4rem;
   border-top: 0;
-  border-bottom: 0;
+  border-bottom: 1px solid rgba(255,255,255,.12);
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-name,
@@ -533,13 +533,19 @@
 }
 
 .claim-your-hero-tiebreak-gm footer {
+  display: grid;
+  grid-template-columns: max-content max-content 107px;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: .8rem;
   margin-top: .3rem;
-  padding-top: .3rem;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: .4rem;
+  padding: .3rem .4rem 0;
 }
-.claim-your-hero-tiebreak-gm footer .claim-your-hero-tiebreak-cancel { margin-left: 0; }
+.claim-your-hero-tiebreak-gm footer .claim-your-hero-tiebreak-cancel {
+  grid-column: 3;
+  justify-self: end;
+  margin: 0;
+}
 
 @media (max-width: 520px) {
   .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-columns,
