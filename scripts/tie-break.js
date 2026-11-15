@@ -99,7 +99,7 @@
       panel = document.createElement("section");
       panel.className = "claim-your-hero-tiebreak-gm";
       panel.dataset.tiebreakId = dispute.id;
-      panel.innerHTML = `<header><strong></strong></header><p></p><div class="claim-your-hero-tiebreak-contenders"></div>`;
+      panel.innerHTML = `<header><strong></strong></header><p></p><div class="claim-your-hero-tiebreak-contenders"></div><footer><button type="button" class="claim-your-hero-tiebreak-cancel"></button></footer>`;
       const openPanels = document.querySelectorAll(".claim-your-hero-tiebreak-gm").length;
       panel.style.top = (14 + openPanels * 4) + "vh";
       panel.style.right = (18 + (openPanels % 3) * 18) + "px";
@@ -123,6 +123,26 @@
       row.append(label, allow);
       list.append(row);
     }
+    const cancel = panel.querySelector(".claim-your-hero-tiebreak-cancel");
+    cancel.textContent = game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.CANCEL");
+    cancel.onclick = () => cancelDispute(dispute.id);
+  }
+
+  function cancelDispute(disputeId) {
+    if (!isActiveGM()) {
+      emit({ type: "cancel-request", disputeId, from: game.user.id });
+      return;
+    }
+    const dispute = disputes.get(disputeId);
+    if (!dispute) return;
+    emit({
+      type: "cancel", disputeId, actorId: dispute.actorId,
+      requesterIds: dispute.requesterIds ?? [dispute.requesterId],
+      playerIds: (dispute.players ?? []).map(player => player.userId),
+      from: game.user.id
+    });
+    closeDispute(disputeId);
+    ui.notifications.info(game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.CANCELLED"));
   }
 
   async function decide(disputeId, winnerId) {
@@ -172,6 +192,16 @@
     }
     if (payload.type === "decide" && isActiveGM()) {
       decide(payload.disputeId, payload.winnerId);
+    }
+    if (payload.type === "cancel-request" && isActiveGM()) {
+      cancelDispute(payload.disputeId);
+    }
+    if (payload.type === "cancel") {
+      document.querySelector(".claim-your-hero-tiebreak-wait")?.remove();
+      if ([...(payload.requesterIds ?? []), ...(payload.playerIds ?? [])].includes(game.user.id) && !game.user.isGM) {
+        ui.notifications.info(game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.CANCELLED"));
+      }
+      closeDispute(payload.disputeId);
     }
     if (payload.type === "resolved") {
       document.querySelector(".claim-your-hero-tiebreak-wait")?.remove();
