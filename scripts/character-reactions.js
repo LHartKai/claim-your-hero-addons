@@ -118,10 +118,12 @@
     menu.setAttribute("role", "menu");
     menu.setAttribute("aria-label", game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.REACTIONS.MENU_LABEL"));
 
+    const currentReaction = getUserReactions(game.user)[actorId];
+
     for (const reaction of REACTIONS) {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "claim-your-hero-reaction-option";
+      button.className = `claim-your-hero-reaction-option${currentReaction === reaction.id ? " is-selected" : ""}`;
       button.setAttribute("role", "menuitem");
       button.setAttribute("aria-label", getReactionLabel(reaction.id));
       button.title = getReactionLabel(reaction.id);
@@ -136,7 +138,9 @@
       button.appendChild(label);
 
       button.addEventListener("click", async () => {
-        const reactions = { ...getUserReactions(game.user), [actorId]: reaction.id };
+        const reactions = { ...getUserReactions(game.user) };
+        if (reactions[actorId] === reaction.id) delete reactions[actorId];
+        else reactions[actorId] = reaction.id;
         try {
           await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
           closeMenu();
@@ -164,7 +168,6 @@
     };
     document.addEventListener("pointerdown", dismiss, { once: true });
     document.addEventListener("keydown", escape, { once: true });
-    menu.querySelector("button")?.focus();
   }
 
   function handleCharacterContextMenu(event) {
