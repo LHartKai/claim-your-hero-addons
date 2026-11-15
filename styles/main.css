@@ -389,7 +389,7 @@
 .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-portrait {
   display: block;
   width: 220px;
-  height: 190px;
+  height: 220px;
   max-width: 72%;
   object-fit: cover;
   object-position: center top;
@@ -432,7 +432,7 @@
   }
   .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-portrait {
     width: 180px;
-    height: 160px;
+    height: 180px;
   }
   .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-avatar {
     flex-basis: 42px;
