@@ -44,7 +44,10 @@
       // Priority 3: favorite, when the player has multiple favorites.
       } else if (reaction === "favorite" && favoriteCount > 1) {
         reason = "favorite";
-      // Priority 4: selected in the choice screen, with no reaction on this character.
+      // Priority 4: interested in this character, but not exclusively.
+      } else if (reaction === "interested") {
+        reason = "interested";
+      // Priority 5: selected in the choice screen, with no reaction on this character.
       } else if (!reaction && selectedHeroes.get(user.id) === actorId) {
         reason = "selected-in-claim";
       }
