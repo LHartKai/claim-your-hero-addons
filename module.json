@@ -25,7 +25,8 @@
   },
   "esmodules": [
     "scripts/main.js",
-    "scripts/localization.js"
+    "scripts/localization.js",
+    "scripts/character-reactions.js"
   ],
   "styles": [
     "styles/main.css"
