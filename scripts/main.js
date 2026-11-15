@@ -521,6 +521,21 @@ Hooks.once("init", () => {
   });
 });
 
+function syncAnonymousPlayerPips(app) {
+  if (app?.options?.id !== `${CYH_ID}-selection` || !app.element) return;
+  const anonymous = !game.user.isGM && game.settings.get(MODULE_ID, ANONYMOUS_SELECTION_SETTING) === true;
+  for (const pip of app.element.querySelectorAll(".interest-pips .pip")) {
+    pip.classList.toggle("is-anonymous", anonymous);
+    if (anonymous) {
+      pip.textContent = "?";
+      pip.removeAttribute("data-tooltip");
+      pip.removeAttribute("aria-label");
+    } else {
+      pip.classList.remove("is-anonymous");
+    }
+  }
+}
+
 Hooks.once("ready", async () => {
   console.log(`[${MODULE_ID}] Sheet layering, pending-view synchronization, and class filtering active.`);
 
@@ -535,10 +550,16 @@ Hooks.once("ready", async () => {
       patchBringToFront(app);
       promoteActorSheet(app);
     }
+    syncAnonymousPlayerPips(app);
     syncRosterViewerIndicators(app);
     syncSelectionOwnership(app);
     ensureClassFilter(app);
     ensurePersistentClassFilter(app);
+  });
+
+  Hooks.on("updateSetting", setting => {
+    if (setting.key !== `${MODULE_ID}.${ANONYMOUS_SELECTION_SETTING}`) return;
+    for (const app of foundry.applications.instances.values()) syncAnonymousPlayerPips(app);
   });
 
   Hooks.on("updateUser", async (user, changes) => {
