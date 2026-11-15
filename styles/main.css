@@ -419,10 +419,22 @@
 }
 
 .claim-your-hero-tiebreak-wait .claim-your-hero-tiebreak-avatar {
+  /* Same visual treatment as Claim Your Hero's .pip, scaled to the requested size. */
+  display: grid;
+  place-items: center;
   flex: 0 0 48px;
   width: 48px;
   height: 48px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, .6);
+  border-radius: 50%;
+  background: var(--player-color);
+  color: #fff;
   font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
+  box-shadow: 0 0 6px rgba(0, 0, 0, .7);
 }
 
 @media (max-width: 520px) {
