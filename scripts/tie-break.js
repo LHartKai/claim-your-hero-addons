@@ -109,6 +109,38 @@
     document.body.append(panel);
   }
 
+  function makeDraggable(panel, handle) {
+    if (!panel || !handle || handle.dataset.dragReady === "true") return;
+    handle.dataset.dragReady = "true";
+    handle.style.cursor = "move";
+    handle.style.touchAction = "none";
+    handle.addEventListener("pointerdown", event => {
+      if (event.button !== 0 || event.target.closest("button")) return;
+      const rect = panel.getBoundingClientRect();
+      panel.style.left = `${rect.left}px`;
+      panel.style.top = `${rect.top}px`;
+      panel.style.right = "auto";
+      panel.style.transform = "none";
+      const offsetX = event.clientX - rect.left;
+      const offsetY = event.clientY - rect.top;
+      handle.setPointerCapture(event.pointerId);
+      const move = moveEvent => {
+        const left = Math.max(0, Math.min(window.innerWidth - panel.offsetWidth, moveEvent.clientX - offsetX));
+        const top = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, moveEvent.clientY - offsetY));
+        panel.style.left = `${left}px`;
+        panel.style.top = `${top}px`;
+      };
+      const stop = () => {
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", stop);
+        handle.removeEventListener("pointercancel", stop);
+      };
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", stop);
+      handle.addEventListener("pointercancel", stop);
+    });
+  }
+
   function reasonLabel(reason) {
     return game.i18n.localize(`CLAIM_YOUR_HERO_ADDONS.TIEBREAK.REASONS.${reason.toUpperCase().replaceAll("-", "_")}`);
   }
