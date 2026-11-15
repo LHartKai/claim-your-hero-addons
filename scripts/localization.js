@@ -32,10 +32,10 @@ Hooks.on("renderApplicationV2", app => {
   const root = app.element;
   if (!root) return;
 
-  // main.js creates the filter elements in its own render hook, so wait until
-  // the current render cycle has completed before applying the translated labels.
-  setTimeout(() => localizeSelectionFilters(app), 0);
-
-  const observer = new MutationObserver(() => localizeSelectionFilters(app));
-  observer.observe(root, { childList: true, subtree: true });
+  // main.js adds the filter during the same render cycle. Run once afterward;
+  // a persistent MutationObserver would otherwise remain attached to every
+  // selection window for its entire lifetime.
+  setTimeout(() => {
+    if (app.element === root) localizeSelectionFilters(app);
+  }, 0);
 });

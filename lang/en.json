@@ -15,9 +15,29 @@
       "RAIL_LABEL": "Player reactions",
       "MENU_LABEL": "Choose a reaction for this character",
       "FAVORITE": "Favorite",
-      "INTERESTED": "Interested",
+        "INTERESTED": "Interested",
       "NOT_WANTED": "Not wanted",
       "SAVE_ERROR": "Your reaction could not be saved. Please try again."
+    },
+    "TIEBREAK": {
+      "TITLE": "Tie-break for {name}",
+      "WAITING": "Tie-break in progress. Please wait for the GM.",
+      "PARTICIPATING": "You are participating in this tie-break. Please wait for the GM.",
+      "ALLOW": "Allow claim",
+      "CANCEL": "Cancel claim",
+      "CANCELLED": "The GM cancelled the claim.",
+      "CLAIM_GRANTED": "The GM approved your claim.",
+      "NOT_SELECTED": "Another player was authorized for this character.",
+      "REASONS": {
+        "FAVORITE": "One of the Favorites",
+        "INTERESTED_WITH_OTHER_FAVORITE": "Interested, but has another Favorite",
+        "UNIQUE_FAVORITE": "Only Favorite character",
+        "UNIQUE_INTERESTED": "Liked only this character",
+        "INTERESTED": "Interested",
+        "SHEET_OPEN": "Sheet open",
+        "SELECTED_IN_CLAIM": "Selected in character selection",
+        "REQUESTER": "Claim requester"
+      }
     }
   }
 }

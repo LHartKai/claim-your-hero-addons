@@ -18,6 +18,26 @@
       "INTERESTED": "Interessado",
       "NOT_WANTED": "Não quero",
       "SAVE_ERROR": "Não foi possível salvar sua reação. Tente novamente."
+    },
+    "TIEBREAK": {
+      "TITLE": "Desempate por {name}",
+      "WAITING": "Desempate em andamento. Aguarde a decisão do GM.",
+      "PARTICIPATING": "Você está participando de um desempate. Aguarde a decisão do GM.",
+      "ALLOW": "Permitir claim",
+      "CANCEL": "Cancelar claim",
+      "CANCELLED": "O claim foi cancelado pelo GM.",
+      "CLAIM_GRANTED": "O GM autorizou seu claim.",
+      "NOT_SELECTED": "Outro jogador recebeu autorização para este personagem.",
+      "REASONS": {
+        "FAVORITE": "Um dos Favoritos",
+        "INTERESTED_WITH_OTHER_FAVORITE": "Interessado mas com outro Favorito",
+        "UNIQUE_FAVORITE": "Único personagem Favorito",
+        "UNIQUE_INTERESTED": "Gostou apenas desse personagem",
+        "INTERESTED": "Interessado",
+        "SHEET_OPEN": "Ficha aberta",
+        "SELECTED_IN_CLAIM": "Selecionado na tela de escolha",
+        "REQUESTER": "Solicitou o claim"
+      }
     }
   }
 }
