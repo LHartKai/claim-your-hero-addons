@@ -244,3 +244,43 @@
   transform: translateY(-5px) scale(1.02);
   box-shadow: 0 0 0 2px var(--claim-your-hero-accent), 0 0 26px var(--claim-your-hero-accent-glow);
 }
+
+
+/* Per-character tie-break windows. Each dispute has its own independent panel. */
+.claim-your-hero-tiebreak-wait,
+.claim-your-hero-tiebreak-gm {
+  position: fixed;
+  z-index: 10050;
+  top: 18%;
+  left: 50%;
+  width: min(440px, calc(100vw - 32px));
+  max-height: 65vh;
+  overflow: auto;
+  transform: translateX(-50%);
+  padding: 1rem;
+  border: 1px solid #b88d3c;
+  border-radius: 10px;
+  background: rgba(20, 16, 13, 0.98);
+  color: #f0e8d8;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .75), 0 0 14px rgba(217, 173, 72, .3);
+}
+.claim-your-hero-tiebreak-gm { top: 24%; left: auto; right: 18px; transform: none; }
+.claim-your-hero-tiebreak-gm header,
+.claim-your-hero-tiebreak-player { display: flex; align-items: center; justify-content: space-between; gap: .7rem; }
+.claim-your-hero-tiebreak-gm header { margin-bottom: .6rem; }
+.claim-your-hero-tiebreak-gm button {
+  padding: .35rem .65rem;
+  border: 1px solid #b88d3c;
+  border-radius: 5px;
+  background: #342819;
+  color: #fff1cf;
+  cursor: pointer;
+}
+.claim-your-hero-tiebreak-contenders { display: grid; gap: .5rem; }
+.claim-your-hero-tiebreak-player { padding: .4rem 0; border-top: 1px solid rgba(255,255,255,.12); }
+.claim-your-hero-tiebreak-avatars { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .8rem; }
+.claim-your-hero-tiebreak-avatar {
+  display: grid; place-items: center; width: 34px; height: 34px;
+  border: 2px solid var(--player-color); border-radius: 50%;
+  background: var(--player-color); color: #fff; font-weight: 700;
+}
