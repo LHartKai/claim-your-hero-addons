@@ -115,7 +115,7 @@
       result = await originalClaim({ userId: winnerId, actorId: dispute.actorId });
     } else if (user?.character) result = { ok: false, reason: "alreadyHas" };
 
-    emit({ type: "resolved", disputeId, actorId: dispute.actorId, winnerId, ok: !!result?.ok });
+    emit({ type: "resolved", disputeId, actorId: dispute.actorId, requesterId: dispute.requesterId, winnerId, ok: !!result?.ok, from: game.user.id });
     if (result?.ok) {
       game.socket.emit(`module.${CYH_ID}`, { type: "claimed", userId: winnerId, actorId: dispute.actorId });
     }
@@ -147,7 +147,7 @@
         ui.notifications.info(game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.CLAIM_GRANTED"));
         foundry.applications.instances.get(SELECTION_ID)?.close();
         game.actors.get(payload.actorId)?.sheet?.render({ force: true });
-      } else if (payload.winnerId !== game.user.id && !game.user.isGM) {
+      } else if (payload.requesterId === game.user.id && !game.user.isGM) {
         ui.notifications.warn(game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.NOT_SELECTED"));
       }
       closeDispute(payload.disputeId);
@@ -206,8 +206,9 @@
     Hooks.on("closeApplication", app => announceSheet(app, false));
     Hooks.on("userConnected", (user, connected) => {
       if (!connected) {
+        const actorId = openSheets.get(user.id);
         openSheets.delete(user.id);
-        emit({ type: "sheet", userId: user.id, actorId: openSheets.get(user.id), open: false, from: game.user.id });
+        if (actorId) emit({ type: "sheet", userId: user.id, actorId, open: false, from: game.user.id });
       }
     });
     console.log(`[${ADDON_ID}] Character tie-break arbitration ready.`);
