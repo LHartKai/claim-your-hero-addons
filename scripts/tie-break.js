@@ -177,6 +177,13 @@
 
   Hooks.once("ready", () => {
     game.socket.on(SOCKET, receive);
+    if (!game.user.isGM && ui.notifications?.warn) {
+      const warn = ui.notifications.warn.bind(ui.notifications);
+      ui.notifications.warn = (message, ...args) => {
+        if (message === "CYH.Selection.Error.failed" && document.querySelector(".claim-your-hero-tiebreak-wait")) return;
+        return warn(message, ...args);
+      };
+    }
 
     // Wrap the main module's GM-side query handler. Returning a pending result stops
     // the normal claim path before it can grant ownership.
