@@ -10,7 +10,7 @@ Ao tentar confirmar o claim, verificar os demais jogadores ativos para o persona
 
 1. **Favorito**: qualquer reação `favorite` no personagem gera disputa.
 2. **Único Interessado**: uma reação `interested` gera disputa somente quando esse jogador não possui nenhum outro personagem marcado como `interested` ou `favorite`. A reação no personagem disputado é desconsiderada ao procurar outros personagens.
-3. **Ficha aberta**: gera disputa quando outro jogador está com a ficha desse personagem aberta, mesmo sem reação.
+3. **Selecionado na tela de claims**: gera disputa quando outro jogador está com esse personagem selecionado na tela do Claim Your Hero, mesmo sem reação.
 
 A reação `not-wanted` não gera disputa.
 
@@ -29,13 +29,13 @@ A reação `not-wanted` não gera disputa.
 - A decisão final e a execução do claim continuam sob autoridade do GM ativo, aproveitando a validação existente do Claim Your Hero.
 - Mensagens de disputa são transitórias e sincronizadas pelo socket do Foundry; não são gravadas como flags permanentes.
 - A autorização deve ser de uso único, expirar se não for consumida e ser revalidada contra o estado atual do Actor e do jogador antes do claim.
-- O estado de ficha aberta precisa ser anunciado pelos clientes dos jogadores e removido ao fechar a ficha ou desconectar.
+- A seleção atual precisa ser anunciada pelos clientes dos jogadores e removida ao limpar a seleção, concluir um claim ou desconectar.
 
 ## Critérios de aceite
 
 - Favorito de outro jogador sempre abre disputa.
 - Interessado de outro jogador abre disputa somente quando for o único personagem desse jogador marcado como Interessado/Favorito.
-- Ficha aberta por outro jogador abre disputa mesmo sem reação.
+- Personagem selecionado por outro jogador na tela de claims abre disputa mesmo sem reação.
 - Interessado acompanhado por outra reação Interessado/Favorito do mesmo jogador não abre disputa por si só.
 - Não quero nunca abre disputa por si só.
 - O claim não altera permissões nem personagem enquanto aguarda.
