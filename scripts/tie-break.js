@@ -21,10 +21,10 @@
   const emit = payload => game.socket.emit(SOCKET, payload);
   const isActiveGM = () => game.user === game.users.activeGM;
 
-  function findConflicts(actorId, requesterId) {
+  function findConflicts(actorId) {
     const conflicts = [];
     for (const user of game.users) {
-      if (!user.active || user.isGM || user.id === requesterId) continue;
+      if (!user.active || user.isGM) continue;
       const reactions = getReactions(user);
       const reaction = reactions[actorId];
       const reactionEntries = Object.entries(reactions).filter(([, value]) =>
@@ -329,7 +329,10 @@
       );
       if (!rosterEntry || requester.character || alreadyClaimed) return originalClaim(data);
 
-      const players = findConflicts(data.actorId, requester.id);
+      const players = findConflicts(data.actorId);
+      // The requester is a contender too when their reaction/selection qualifies.
+      // Only arbitrate when at least two distinct players are actually competing.
+      if (players.length < 2) return originalClaim(data);
       let dispute = [...disputes.values()].find(item => item.actorId === data.actorId);
       if (!players.length && !dispute) return originalClaim(data);
       if (!dispute) {
