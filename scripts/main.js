@@ -122,6 +122,73 @@ async function reconcilePendingViewRecords(user) {
  * panel uses pendingViews as its source, so the addon additionally hides stale viewer
  * entries when a grant no longer exists in Foundry.
  */
+/**
+ * Find an explicitly assigned non-GM Owner for an Actor.
+ * Do not use getUserLevel here: Foundry's default ownership may grant broad
+ * access to all players, but only an explicit per-user OWNER marks a hero claimed.
+ */
+function getExplicitActorOwner(actor) {
+  if (!actor) return null;
+  return game.users.find(user =>
+    !user.isGM &&
+    Number(actor.ownership?.[user.id] ?? 0) >= OWNER
+  ) ?? null;
+}
+
+function setClaimedLabel(element, owner) {
+  const icon = document.createElement("i");
+  icon.className = "fa-solid fa-lock";
+  const label = document.createElement("span");
+  label.textContent = game.i18n.format("CYH.Selection.ClaimedBy", { name: owner.name });
+  element.replaceChildren(icon, document.createTextNode(" "), label);
+}
+
+/**
+ * Make the selection UI reflect explicit Actor ownership even when the owner
+ * has not linked that Actor as their current User.character.
+ */
+function syncSelectionOwnership(app) {
+  if (app?.options?.id !== `${CYH_ID}-selection` || !app.element) return;
+
+  for (const card of app.element.querySelectorAll(".hero-card[data-actor-id]")) {
+    const actor = game.actors.get(card.dataset.actorId);
+    const owner = getExplicitActorOwner(actor);
+    const banner = card.querySelector(".claimed-banner");
+
+    card.classList.toggle("taken", Boolean(owner));
+    if (!owner) {
+      // Do not remove a banner rendered by the base app for a character-linked claim.
+      continue;
+    }
+
+    card.classList.remove("mine");
+    if (banner) {
+      banner.classList.remove("mine");
+      setClaimedLabel(banner, owner);
+    } else {
+      const claimed = document.createElement("div");
+      claimed.className = "claimed-banner";
+      setClaimedLabel(claimed, owner);
+      card.appendChild(claimed);
+    }
+  }
+
+  const selectedCard = app.element.querySelector(".hero-card.selected[data-actor-id]");
+  const selectedOwner = getExplicitActorOwner(game.actors.get(selectedCard?.dataset.actorId));
+  if (!selectedOwner) return;
+
+  app.element.querySelector('[data-action="confirmClaim"]')?.remove();
+  app.element.querySelector('[data-action="viewSheet"]')?.remove();
+
+  const detailBody = app.element.querySelector(".detail-body");
+  if (detailBody && !detailBody.querySelector(".claim-your-hero-addons-owned-notice")) {
+    const notice = document.createElement("p");
+    notice.className = "contested claim-your-hero-addons-owned-notice";
+    setClaimedLabel(notice, selectedOwner);
+    detailBody.insertBefore(notice, detailBody.querySelector(".description"));
+  }
+}
+
 function syncRosterViewerIndicators(app) {
   if (!game.user.isGM || app?.options?.id !== `${CYH_ID}-roster-config`) return;
 
@@ -459,6 +526,7 @@ Hooks.once("ready", async () => {
       promoteActorSheet(app);
     }
     syncRosterViewerIndicators(app);
+    syncSelectionOwnership(app);
     ensureClassFilter(app);
     ensurePersistentClassFilter(app);
   });
