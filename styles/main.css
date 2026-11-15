@@ -377,11 +377,11 @@
   width: 76px;
   height: 76px;
   transform: translateX(-50%);
-  opacity: .17;
+  opacity: .18;
   pointer-events: none;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+  background-color: #e2bd68;
+  -webkit-mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
+  mask: url("../assets/tiebreak-sword.png") center / contain no-repeat;
 }
 
 /* Portrait crop follows the selection-card artwork framing, without card badges,
@@ -439,4 +439,11 @@
     width: 42px;
     height: 42px;
   }
+}
+
+
+/* Fully opaque arbitration surface: character sheets must not show through it. */
+.claim-your-hero-tiebreak-wait {
+  background: #14100d !important;
+  z-index: 10001 !important;
 }
