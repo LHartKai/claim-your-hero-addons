@@ -316,3 +316,25 @@
   line-height: 1;
   text-align: center;
 }
+
+
+/* Optical centering for Font Awesome reaction glyphs in the small circular badges. */
+.claim-your-hero-reaction {
+  display: grid;
+  place-items: center;
+  padding: 0 !important;
+  line-height: 1 !important;
+  text-align: center;
+}
+
+.claim-your-hero-reaction > i {
+  display: block;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  font-size: 12px;
+  text-align: center;
+  transform: translateY(-0.5px);
+}
