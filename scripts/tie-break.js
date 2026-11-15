@@ -77,7 +77,7 @@
     // Keep the notice above the selection overlay (9998), but below actor sheets (10000).
     panel.style.setProperty("z-index", "9999", "important");
     panel.innerHTML = `
-      <div class="claim-your-hero-tiebreak-sword" aria-hidden="true"></div>
+      <img class="claim-your-hero-tiebreak-sword" src="modules/claim-your-hero-addons/assets/tiebreak-sword.png" alt="">
       <h2></h2>
       <img class="claim-your-hero-tiebreak-portrait" alt="">
       <p></p>
@@ -165,7 +165,7 @@
       panel = document.createElement("section");
       panel.className = "claim-your-hero-tiebreak-gm";
       panel.dataset.tiebreakId = dispute.id;
-      panel.innerHTML = `<header><span class="claim-your-hero-tiebreak-gm-sword" aria-hidden="true"></span><strong></strong></header><div class="claim-your-hero-tiebreak-columns"><span>Jogador</span><span>Nível de Interesse</span><span></span></div><div class="claim-your-hero-tiebreak-contenders"></div><footer><button type="button" class="claim-your-hero-tiebreak-cancel"></button></footer>`;
+      panel.innerHTML = `<header><img class="claim-your-hero-tiebreak-gm-sword" src="modules/claim-your-hero-addons/assets/tiebreak-sword.png" alt=""><strong></strong></header><div class="claim-your-hero-tiebreak-columns"><span>Jogador</span><span>Nível de Interesse</span><span></span></div><div class="claim-your-hero-tiebreak-contenders"></div><footer><button type="button" class="claim-your-hero-tiebreak-cancel"></button></footer>`;
       const openPanels = document.querySelectorAll(".claim-your-hero-tiebreak-gm").length;
       panel.style.top = (14 + openPanels * 4) + "vh";
       panel.style.right = (18 + (openPanels % 3) * 18) + "px";
@@ -175,7 +175,6 @@
     }
     panel.querySelector("header strong").textContent = `Desempate — ${dispute.actorName}`;
     const contenders = dispute.players ?? [];
-    panel.querySelector("p").textContent = "";
     const list = panel.querySelector(".claim-your-hero-tiebreak-contenders");
     list.replaceChildren();
     for (const player of contenders) {
