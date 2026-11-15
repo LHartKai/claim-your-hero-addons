@@ -8,7 +8,7 @@
   const SOCKET = `module.${ADDON_ID}.tiebreak`;
   const SELECTION_ID = `${CYH_ID}-selection`;
   const disputes = new Map();
-  const openSheets = new Map();
+  const selectedHeroes = new Map();
   const claimApprovals = new Map();
   let originalClaim = null;
 
@@ -33,8 +33,8 @@
           otherActorId !== actorId && (value === "favorite" || value === "interested")
         );
         if (!hasOtherPriority) reason = "unique-interested";
-      } else if (!reaction && openSheets.get(user.id)?.has(actorId)) {
-        reason = "sheet-open";
+      } else if (!reaction && selectedHeroes.get(user.id) === actorId) {
+        reason = "selected-in-claim";
       }
       if (reason) conflicts.push({
         userId: user.id, name: user.name, color: getColor(user), reason
@@ -84,7 +84,9 @@
       document.body.append(panel);
     }
     panel.querySelector("header strong").textContent = `Desempate — ${dispute.actorName}`;
-    const requesterIds = dispute.requesterIds ?? [dispute.requesterId];
+    const requesterIds = [...new Set(dispute.requesterIds ?? [dispute.requesterId])];
+    const requesterSet = new Set(requesterIds);
+    const contenders = (dispute.players ?? []).filter(player => !requesterSet.has(player.userId) && player.reason !== "requester");
     const requesterNames = requesterIds.map(id => game.users.get(id)?.name ?? "Jogador");
     panel.querySelector("p").textContent = `Solicitante(s): ${requesterNames.join(", ")}`;
     const requesterList = panel.querySelector(".claim-your-hero-tiebreak-requester");
@@ -105,7 +107,7 @@
     }
     const list = panel.querySelector(".claim-your-hero-tiebreak-contenders");
     list.replaceChildren();
-    for (const player of dispute.players) {
+    for (const player of contenders) {
       const row = document.createElement("div");
       row.className = "claim-your-hero-tiebreak-player";
       const label = document.createElement("span");
@@ -150,14 +152,13 @@
 
   function receive(payload) {
     if (!payload || payload.from === game.user.id) return;
-    if (payload.type === "sheet") {
-      if (payload.open) {
-        if (!openSheets.has(payload.userId)) openSheets.set(payload.userId, new Set());
-        openSheets.get(payload.userId).add(payload.actorId);
-      } else {
-        const opened = openSheets.get(payload.userId);
-        opened?.delete(payload.actorId);
-        if (opened?.size === 0) openSheets.delete(payload.userId);
+    if (payload.type === "select") {
+      if (payload.actorId) selectedHeroes.set(payload.userId, payload.actorId);
+      else selectedHeroes.delete(payload.userId);
+    }
+    if (payload.type === "claimed") {
+      for (const [userId, actorId] of selectedHeroes.entries()) {
+        if (actorId === payload.actorId) selectedHeroes.delete(userId);
       }
     }
     if (payload.type === "created") {
@@ -255,14 +256,12 @@
       return { ok: false, reason: "tieBreakPending", disputeId: dispute.id };
     };
 
-    Hooks.on("renderApplicationV2", app => announceSheet(app, true));
-    Hooks.on("closeApplication", app => announceSheet(app, false));
-    Hooks.on("renderActorSheet", app => announceSheet(app, true));
-    Hooks.on("closeActorSheet", app => announceSheet(app, false));
+    // Claim Your Hero broadcasts the currently selected actor on its own socket.
+    // Mirror that ephemeral state so the GM can arbitrate based on the selection UI,
+    // not on whether an Actor sheet happens to be open.
+    game.socket.on(`module.${CYH_ID}`, receive);
     Hooks.on("userConnected", (user, connected) => {
-      if (!connected) {
-        openSheets.delete(user.id);
-      }
+      if (!connected) selectedHeroes.delete(user.id);
     });
     console.log(`[${ADDON_ID}] Character tie-break arbitration ready.`);
   });
