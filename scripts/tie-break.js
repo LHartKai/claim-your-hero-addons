@@ -21,22 +21,32 @@
   const emit = payload => game.socket.emit(SOCKET, payload);
   const isActiveGM = () => game.user === game.users.activeGM;
 
-  function findConflicts(requesterId, actorId) {
+  function findConflicts(actorId) {
     const conflicts = [];
     for (const user of game.users) {
       if (!user.active || user.isGM) continue;
       const reactions = getReactions(user);
       const reaction = reactions[actorId];
+      const reactionEntries = Object.entries(reactions).filter(([, value]) =>
+        value === "favorite" || value === "interested"
+      );
+      const favoriteCount = reactionEntries.filter(([, value]) => value === "favorite").length;
       let reason = null;
-      if (reaction === "favorite") reason = "favorite";
-      else if (reaction === "interested") {
-        const hasOtherPriority = Object.entries(reactions).some(([otherActorId, value]) =>
-          otherActorId !== actorId && (value === "favorite" || value === "interested")
-        );
-        if (!hasOtherPriority) reason = "unique-interested";
+
+      // Priority 1: interested in exactly one character (this one).
+      if (reaction === "interested" && reactionEntries.length === 1) {
+        reason = "unique-interested";
+      // Priority 2: this is the player's only favorite, regardless of interests.
+      } else if (reaction === "favorite" && favoriteCount === 1) {
+        reason = "unique-favorite";
+      // Priority 3: favorite, when the player has multiple favorites.
+      } else if (reaction === "favorite" && favoriteCount > 1) {
+        reason = "favorite";
+      // Priority 4: selected in the choice screen, with no reaction on this character.
       } else if (!reaction && selectedHeroes.get(user.id) === actorId) {
         reason = "selected-in-claim";
       }
+
       if (reason) conflicts.push({
         userId: user.id, name: user.name, color: getColor(user), reason
       });
@@ -208,7 +218,7 @@
       const requester = game.users.get(data.userId);
       if (!actor || !requester) return originalClaim(data);
 
-      const players = findConflicts(data.userId, data.actorId);
+      const players = findConflicts(data.actorId);
       let dispute = [...disputes.values()].find(item => item.actorId === data.actorId);
       if (!players.length && !dispute) return originalClaim(data);
       if (!dispute) {
