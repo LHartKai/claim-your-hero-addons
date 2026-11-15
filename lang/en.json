@@ -28,6 +28,7 @@
       "NOT_SELECTED": "Another player was authorized for this character.",
       "REASONS": {
         "FAVORITE": "Favorite",
+        "UNIQUE_FAVORITE": "Only favorite character",
         "UNIQUE_INTERESTED": "Only Interested character",
         "SHEET_OPEN": "Sheet open",
         "SELECTED_IN_CLAIM": "Selected in claim screen",
