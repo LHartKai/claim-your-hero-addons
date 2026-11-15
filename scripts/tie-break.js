@@ -4,6 +4,7 @@
   const ADDON_ID = "claim-your-hero-addons";
   const CYH_ID = "claim-your-hero";
   const FLAG_KEY = "characterReactions";
+  const ANONYMOUS_SELECTION_SETTING = "anonymousSelection";
   const QUERY = `${CYH_ID}.claim`;
   // Foundry registers exactly one socket channel per module: module.<module-id>.
   // Subchannels such as ".tiebreak" are not registered and silently drop broadcasts.
@@ -22,6 +23,7 @@
     return value && typeof value === "object" && !Array.isArray(value) ? value : {};
   };
   const getColor = user => user?.color?.css ?? user?.color ?? "#888888";
+  const isAnonymousSelection = () => !game.user.isGM && game.settings.get(ADDON_ID, ANONYMOUS_SELECTION_SETTING) === true;
   const emit = payload => game.socket.emit(SOCKET, payload);
   const isActiveGM = () => game.user === game.users.activeGM;
 
@@ -116,11 +118,13 @@
     for (const player of participants.values()) {
       const avatar = document.createElement("span");
       avatar.className = `claim-your-hero-tiebreak-avatar${player.userId === game.user.id ? " is-self" : ""}`;
-      avatar.style.setProperty("--player-color", player.color || "#888888");
-      avatar.textContent = (player.name || "?").slice(0, 1).toUpperCase();
-      avatar.title = player.reason
-        ? `${player.name} — ${reasonLabel(player.reason)}`
-        : player.name;
+      const anonymous = isAnonymousSelection();
+      if (!anonymous) avatar.style.setProperty("--player-color", player.color || "#888888");
+      avatar.classList.toggle("is-anonymous", anonymous);
+      avatar.textContent = anonymous ? "?" : (player.name || "?").slice(0, 1).toUpperCase();
+      avatar.title = anonymous
+        ? "Jogador anônimo"
+        : player.reason ? `${player.name} — ${reasonLabel(player.reason)}` : player.name;
       panel.querySelector(".claim-your-hero-tiebreak-avatars").append(avatar);
     }
     document.body.append(panel);
@@ -302,6 +306,10 @@
 
   Hooks.once("ready", () => {
     game.socket.on(SOCKET, receive);
+    Hooks.on("updateSetting", setting => {
+      if (setting.key !== `${ADDON_ID}.${ANONYMOUS_SELECTION_SETTING}` || game.user.isGM) return;
+      for (const dispute of disputes.values()) playerWaitingView(dispute);
+    });
     if (!game.user.isGM && ui.notifications?.warn) {
       const warn = ui.notifications.warn.bind(ui.notifications);
       ui.notifications.warn = (message, ...args) => {
