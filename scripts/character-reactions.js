@@ -60,7 +60,7 @@
 
     const color = getPlayerColor(user);
     const badge = document.createElement("span");
-    badge.className = "claim-your-hero-reaction";
+    badge.className = `claim-your-hero-reaction${user.id === game.user.id ? " is-current-player" : " is-other-player"}`;
     badge.style.setProperty("--reaction-player-color", color);
     badge.style.setProperty("--reaction-icon-color", getContrastColor(color));
     badge.dataset.userId = user.id;
