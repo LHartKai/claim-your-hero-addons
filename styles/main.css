@@ -364,7 +364,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  margin: .15rem 0 .45rem;
+  margin: .1rem 0 .15rem;
   text-align: center;
   line-height: 1.2;
 }
@@ -389,6 +389,7 @@
   display: block;
   width: 220px;
   height: 220px;
+  margin-top: 0;
   max-width: 72%;
   object-fit: cover;
   object-position: center top;
@@ -454,7 +455,7 @@
   align-items: center;
   justify-content: center;
   gap: .45rem;
-  margin-bottom: .8rem;
+  margin-bottom: .35rem;
   text-align: center;
 }
 
@@ -489,9 +490,9 @@
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player {
   min-width: 0;
-  padding: .45rem .4rem;
+  padding: .3rem .4rem;
   border-top: 0;
-  border-bottom: 1px solid rgba(255,255,255,.1);
+  border-bottom: 0;
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-name,
@@ -532,8 +533,8 @@
 }
 
 .claim-your-hero-tiebreak-gm footer {
-  margin-top: .45rem;
-  padding-top: .45rem;
+  margin-top: .3rem;
+  padding-top: .3rem;
 }
 
 @media (max-width: 520px) {
