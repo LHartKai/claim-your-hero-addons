@@ -73,8 +73,8 @@
     panel.className = "claim-your-hero-tiebreak-wait";
     // Keep the player notice below Foundry character sheets and other app windows,
     // so it never covers the sheet the player may need to consult.
-    Object.assign(panel.style, { position: "fixed", zIndex: "9997", top: "18%", left: "50%", transform: "translateX(-50%)" });
-    panel.style.setProperty("z-index", "9997", "important");
+    Object.assign(panel.style, { position: "fixed", zIndex: "9999", top: "18%", left: "50%", transform: "translateX(-50%)" });
+    panel.style.setProperty("z-index", "9999", "important");
     panel.innerHTML = `
       <div class="claim-your-hero-tiebreak-sword" aria-hidden="true"></div>
       <h2></h2>
