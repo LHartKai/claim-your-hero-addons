@@ -53,7 +53,7 @@
     badge.setAttribute("aria-label", badge.title);
 
     const icon = document.createElement("i");
-    icon.className = anonymous ? "fa-solid fa-question" : `fa-solid ${reaction.icon}`;
+    icon.className = `fa-solid ${reaction.icon}`;
     icon.setAttribute("aria-hidden", "true");
     badge.appendChild(icon);
     return badge;
