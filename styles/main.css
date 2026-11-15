@@ -580,7 +580,16 @@
 .claim-your-hero-tiebreak-gm footer .claim-your-hero-tiebreak-cancel {
   grid-column: 3;
   justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  box-sizing: border-box;
   margin: 0;
+  padding: 0 .7rem;
+  font-size: .78rem;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 @media (max-width: 520px) {
