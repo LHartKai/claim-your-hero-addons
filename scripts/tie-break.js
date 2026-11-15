@@ -107,6 +107,7 @@
       panel.querySelector(".claim-your-hero-tiebreak-avatars").append(avatar);
     }
     document.body.append(panel);
+    makeDraggable(panel, panel.querySelector("h2"));
   }
 
   function makeDraggable(panel, handle) {
@@ -158,6 +159,7 @@
       panel.style.right = (18 + (openPanels % 3) * 18) + "px";
       panel.style.zIndex = String(10050 + openPanels);
       document.body.append(panel);
+      makeDraggable(panel, panel.querySelector("header"));
     }
     panel.querySelector("header strong").textContent = `Desempate — ${dispute.actorName}`;
     const contenders = dispute.players ?? [];
