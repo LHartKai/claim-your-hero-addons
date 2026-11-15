@@ -329,3 +329,9 @@
   text-align: center;
   transform: none;
 }
+
+/* Preserve the card hover highlight while its reaction menu is open outside the card. */
+.claim-your-hero.hero-selection .hero-card[data-actor-id].reaction-menu-open {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 0 22px var(--claim-your-hero-accent-glow);
+}
