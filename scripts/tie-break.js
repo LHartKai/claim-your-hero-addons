@@ -24,7 +24,7 @@
   function findConflicts(requesterId, actorId) {
     const conflicts = [];
     for (const user of game.users) {
-      if (!user.active || user.isGM || user.id === requesterId) continue;
+      if (!user.active || user.isGM) continue;
       const reactions = getReactions(user);
       const reaction = reactions[actorId];
       let reason = null;
@@ -97,11 +97,8 @@
       document.body.append(panel);
     }
     panel.querySelector("header strong").textContent = `Desempate — ${dispute.actorName}`;
-    const requesterIds = [...new Set(dispute.requesterIds ?? [dispute.requesterId])];
-    const requesterSet = new Set(requesterIds);
-    const contenders = (dispute.players ?? []).filter(player => !requesterSet.has(player.userId) && player.reason !== "requester");
-    const requesterNames = requesterIds.map(id => game.users.get(id)?.name ?? "Jogador");
-    panel.querySelector("p").textContent = `Solicitante(s): ${requesterNames.join(", ")}`;
+    const contenders = dispute.players ?? [];
+    panel.querySelector("p").textContent = "";
     const list = panel.querySelector(".claim-your-hero-tiebreak-contenders");
     list.replaceChildren();
     for (const player of contenders) {
@@ -227,8 +224,7 @@
         if (!dispute.requesterIds.includes(data.userId)) {
           dispute.requesterIds.push(data.userId);
         }
-        const requesterSet = new Set(dispute.requesterIds);
-        dispute.players = [...new Map([...dispute.players, ...players].filter(p => !requesterSet.has(p.userId) && p.reason !== "requester").map(p => [p.userId, p])).values()];
+        dispute.players = [...new Map([...dispute.players, ...players].map(p => [p.userId, p])).values()];
         renderGMDispute(dispute);
         emit({ type: "created", dispute, from: game.user.id });
       }
