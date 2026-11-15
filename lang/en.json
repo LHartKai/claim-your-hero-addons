@@ -10,6 +10,14 @@
     },
     "PERSISTENT_CLASS_FILTER": {
       "ARIA_LABEL": "Persistent function search"
+    },
+    "REACTIONS": {
+      "RAIL_LABEL": "Player reactions",
+      "MENU_LABEL": "Choose a reaction for this character",
+      "FAVORITE": "Favorite",
+      "INTERESTED": "Interested",
+      "NOT_WANTED": "Not wanted",
+      "SAVE_ERROR": "Your reaction could not be saved. Please try again."
     }
   }
 }

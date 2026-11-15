@@ -17,6 +17,7 @@
 
   const enhancedRoots = new WeakSet();
   let openMenu = null;
+  let openMenuCard = null;
 
   function getPlayerColor(user) {
     const color = user?.color;
@@ -46,7 +47,8 @@
   }
 
   function getUserReactions(user) {
-    return user?.getFlag(MODULE_ID, FLAG_KEY) ?? {};
+    const value = user?.getFlag(MODULE_ID, FLAG_KEY);
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
   }
 
   function getReactionLabel(reactionId) {
@@ -107,10 +109,12 @@
 
   function closeMenu() {
     openMenu?.remove();
+    openMenuCard?.classList.remove("reaction-menu-open");
     openMenu = null;
+    openMenuCard = null;
   }
 
-  function openReactionMenu(event, actorId) {
+  function openReactionMenu(event, actorId, card) {
     closeMenu();
 
     const menu = document.createElement("div");
@@ -118,10 +122,12 @@
     menu.setAttribute("role", "menu");
     menu.setAttribute("aria-label", game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.REACTIONS.MENU_LABEL"));
 
+    const currentReaction = getUserReactions(game.user)[actorId];
+
     for (const reaction of REACTIONS) {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "claim-your-hero-reaction-option";
+      button.className = `claim-your-hero-reaction-option${currentReaction === reaction.id ? " is-selected" : ""}`;
       button.setAttribute("role", "menuitem");
       button.setAttribute("aria-label", getReactionLabel(reaction.id));
       button.title = getReactionLabel(reaction.id);
@@ -136,9 +142,24 @@
       button.appendChild(label);
 
       button.addEventListener("click", async () => {
-        const reactions = { ...getUserReactions(game.user), [actorId]: reaction.id };
+        const reactions = { ...getUserReactions(game.user) };
+        const isRemoving = reactions[actorId] === reaction.id;
         try {
-          await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
+          if (isRemoving) {
+            // Foundry merges object flags recursively; setFlag with a map that
+            // omits actorId does not delete that nested key. Use -= deletion.
+            await game.user.update({
+              [`flags.${MODULE_ID}.${FLAG_KEY}.-=${actorId}`]: null
+            });
+            const remaining = { ...reactions };
+            delete remaining[actorId];
+            if (Object.keys(remaining).length === 0) {
+              await game.user.unsetFlag(MODULE_ID, FLAG_KEY);
+            }
+          } else {
+            reactions[actorId] = reaction.id;
+            await game.user.setFlag(MODULE_ID, FLAG_KEY, reactions);
+          }
           closeMenu();
           refreshOpenSelectionScreens();
         } catch (error) {
@@ -150,11 +171,14 @@
     }
 
     document.body.appendChild(menu);
-    const left = Math.max(8, Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8));
-    const top = Math.max(8, Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8));
+    // Offset from the context-click point so the pointer does not hover Favorito on open.
+    const left = Math.max(8, Math.min(event.clientX + 14, window.innerWidth - menu.offsetWidth - 8));
+    const top = Math.max(8, Math.min(event.clientY + 14, window.innerHeight - menu.offsetHeight - 8));
     menu.style.left = `${left}px`;
     menu.style.top = `${top}px`;
     openMenu = menu;
+    openMenuCard = card;
+    card.classList.add("reaction-menu-open");
 
     const dismiss = pointerEvent => {
       if (!menu.contains(pointerEvent.target)) closeMenu();
@@ -179,7 +203,7 @@
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
-    openReactionMenu(event, card.dataset.actorId);
+    openReactionMenu(event, card.dataset.actorId, card);
   }
 
   function enhanceSelection(app) {
