@@ -337,10 +337,15 @@
       const rosterEntry = game.settings.get(CYH_ID, "roster")?.entries
         ?.find(entry => entry.actorId === data.actorId);
       const alreadyClaimed = game.users.some(user =>
-        !user.isGM && user.id !== requester.id &&
-        (user.character?.id === actor.id || actor.getUserLevel(user) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
+        !user.isGM && (
+          user.character?.id === actor.id ||
+          Number(actor.ownership?.[user.id] ?? 0) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+        )
       );
-      if (!rosterEntry || requester.character || alreadyClaimed) return originalClaim(data);
+      if (!rosterEntry || requester.character) return originalClaim(data);
+      // A roster Actor with an explicit non-GM Owner is already claimed even when
+      // that user has not linked it as their current character.
+      if (alreadyClaimed) return { ok: false, reason: "taken" };
 
       const players = findConflicts(data.actorId);
       // The requester is a contender too when their reaction/selection qualifies.
