@@ -76,7 +76,7 @@
       panel = document.createElement("section");
       panel.className = "claim-your-hero-tiebreak-gm";
       panel.dataset.tiebreakId = dispute.id;
-      panel.innerHTML = `<header><strong></strong></header><p></p><div class="claim-your-hero-tiebreak-contenders"></div>`;
+      panel.innerHTML = `<header><strong></strong></header><p></p><div class="claim-your-hero-tiebreak-requester"></div><div class="claim-your-hero-tiebreak-contenders"></div>`;
       const openPanels = document.querySelectorAll(".claim-your-hero-tiebreak-gm").length;
       panel.style.top = (14 + openPanels * 4) + "vh";
       panel.style.right = (18 + (openPanels % 3) * 18) + "px";
@@ -84,7 +84,25 @@
       document.body.append(panel);
     }
     panel.querySelector("header strong").textContent = `Desempate — ${dispute.actorName}`;
-    panel.querySelector("p").textContent = `Solicitante: ${game.users.get(dispute.requesterId)?.name ?? "Jogador"}`;
+    const requesterIds = dispute.requesterIds ?? [dispute.requesterId];
+    const requesterNames = requesterIds.map(id => game.users.get(id)?.name ?? "Jogador");
+    panel.querySelector("p").textContent = `Solicitante(s): ${requesterNames.join(", ")}`;
+    const requesterList = panel.querySelector(".claim-your-hero-tiebreak-requester");
+    requesterList.replaceChildren();
+    for (const requesterId of requesterIds) {
+      const requester = game.users.get(requesterId);
+      if (!requester) continue;
+      const row = document.createElement("div");
+      row.className = "claim-your-hero-tiebreak-player is-requester";
+      const label = document.createElement("span");
+      label.textContent = `${requester.name} — Solicitante`;
+      const allow = document.createElement("button");
+      allow.type = "button";
+      allow.textContent = game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.ALLOW");
+      allow.addEventListener("click", () => decide(dispute.id, requesterId));
+      row.append(label, allow);
+      requesterList.append(row);
+    }
     const list = panel.querySelector(".claim-your-hero-tiebreak-contenders");
     list.replaceChildren();
     for (const player of dispute.players) {
@@ -165,7 +183,7 @@
   }
 
   function announceSheet(app, open) {
-    const actorId = app?.actor?.id;
+    const actorId = (app?.actor ?? app?.document)?.id;
     if (!actorId || game.user.isGM) return;
     if (open) {
       if (!openSheets.has(game.user.id)) openSheets.set(game.user.id, new Set());
@@ -212,7 +230,7 @@
       if (!dispute) {
         dispute = {
           id: foundry.utils.randomID(), actorId: data.actorId, actorName: actor.name,
-          requesterId: data.userId, requesterIds: [data.userId], players: [...players, { userId: data.userId, name: requester.name, color: getColor(requester), reason: 'requester' }], createdAt: Date.now()
+          requesterId: data.userId, requesterIds: [data.userId], players, createdAt: Date.now()
         };
         disputes.set(dispute.id, dispute);
         renderGMDispute(dispute);
@@ -221,7 +239,6 @@
         if (!dispute.requesterIds) dispute.requesterIds = [dispute.requesterId];
         if (!dispute.requesterIds.includes(data.userId)) {
           dispute.requesterIds.push(data.userId);
-          dispute.players.push({ userId: data.userId, name: requester.name, color: getColor(requester), reason: 'requester' });
         }
         dispute.players = [...new Map([...dispute.players, ...players].map(p => [p.userId, p])).values()];
         renderGMDispute(dispute);
@@ -232,6 +249,8 @@
 
     Hooks.on("renderApplicationV2", app => announceSheet(app, true));
     Hooks.on("closeApplication", app => announceSheet(app, false));
+    Hooks.on("renderActorSheet", app => announceSheet(app, true));
+    Hooks.on("closeActorSheet", app => announceSheet(app, false));
     Hooks.on("userConnected", (user, connected) => {
       if (!connected) {
         openSheets.delete(user.id);
