@@ -233,8 +233,14 @@
   color: #fff1cf;
 }
 
-/* Keep the card highlight while its context menu is open outside the card. */
-.claim-your-hero.hero-selection .hero-card[data-actor-id].reaction-menu-open {
+/* Opening the reaction menu moves the pointer away from the card. Reproduce
+   hover only for unselected cards; a selected card must keep its selected highlight. */
+.claim-your-hero.hero-selection .hero-card[data-actor-id].reaction-menu-open:not(.selected) {
   transform: translateY(-5px) scale(1.02);
   box-shadow: 0 0 22px var(--claim-your-hero-accent-glow);
+}
+
+.claim-your-hero.hero-selection .hero-card[data-actor-id].reaction-menu-open.selected {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 0 0 2px var(--claim-your-hero-accent), 0 0 26px var(--claim-your-hero-accent-glow);
 }
