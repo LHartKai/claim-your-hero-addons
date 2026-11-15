@@ -559,7 +559,9 @@ Hooks.once("ready", async () => {
 
   Hooks.on("updateSetting", setting => {
     if (setting.key !== `${MODULE_ID}.${ANONYMOUS_SELECTION_SETTING}`) return;
-    for (const app of foundry.applications.instances.values()) syncAnonymousPlayerPips(app);
+    for (const app of foundry.applications.instances.values()) {
+      if (app?.options?.id === `${CYH_ID}-selection`) app.render({ force: true });
+    }
   });
 
   Hooks.on("updateUser", async (user, changes) => {
