@@ -3,7 +3,9 @@
     "NAME": "Claim Your Hero — Addons",
     "SETTINGS": {
       "PERSISTENT_CLASS_SEARCH_NAME": "Persistent Search-by-Function",
-      "PERSISTENT_CLASS_SEARCH_HINT": "If any characters on the roster have a role that isn't currently selected as recommended in the Recommended Composition menu, that role will appear below the recommendations during hero selection."
+      "PERSISTENT_CLASS_SEARCH_HINT": "If any characters on the roster have a role that isn't currently selected as recommended in the Recommended Composition menu, that role will appear below the recommendations during hero selection.",
+      "ANONYMOUS_SELECTION_NAME": "Anonymous Selection",
+      "ANONYMOUS_SELECTION_HINT": "Hides player identities and their reactions from all players. The GM continues to see real identities. Changes take effect immediately."
     },
     "CLASS_FILTER": {
       "ARIA_LABEL": "Class filter"
