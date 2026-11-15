@@ -28,6 +28,7 @@
       "NOT_SELECTED": "Outro jogador recebeu autorização para este personagem.",
       "REASONS": {
         "FAVORITE": "Favorito",
+        "UNIQUE_FAVORITE": "Único personagem favorito",
         "UNIQUE_INTERESTED": "Único Interessado",
         "SHEET_OPEN": "Ficha aberta",
         "SELECTED_IN_CLAIM": "Selecionado na tela de claims",
