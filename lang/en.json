@@ -15,7 +15,6 @@
       "RAIL_LABEL": "Player reactions",
       "MENU_LABEL": "Choose a reaction for this character",
       "FAVORITE": "Favorite",
-      "INTERESTED_WITH_OTHER_FAVORITE": "Interested, but has another Favorite",
         "INTERESTED": "Interested",
       "NOT_WANTED": "Not wanted",
       "SAVE_ERROR": "Your reaction could not be saved. Please try again."
@@ -30,7 +29,8 @@
       "CLAIM_GRANTED": "The GM approved your claim.",
       "NOT_SELECTED": "Another player was authorized for this character.",
       "REASONS": {
-        "FAVORITE": "Favorite",
+        "FAVORITE": "One of the Favorites",
+        "INTERESTED_WITH_OTHER_FAVORITE": "Interested, but has another Favorite",
         "UNIQUE_FAVORITE": "Only Favorite character",
         "UNIQUE_INTERESTED": "Liked only this character",
         "INTERESTED": "Interested",
