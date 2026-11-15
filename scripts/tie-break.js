@@ -252,6 +252,14 @@
 
   function receive(payload) {
     if (!payload || payload.from === game.user.id) return;
+
+    // Arbitration commands must come from a GM. State-changing outcomes must
+    // come specifically from the currently active GM.
+    const sender = payload.from ? game.users.get(payload.from) : null;
+    if (["decide", "cancel-request"].includes(payload.type) && !sender?.isGM) return;
+    if (["created", "cancel", "resolved"].includes(payload.type) &&
+        (!sender?.isGM || sender.id !== game.users.activeGM?.id)) return;
+
     if (payload.type === "select") {
       if (payload.actorId) selectedHeroes.set(payload.userId, payload.actorId);
       else selectedHeroes.delete(payload.userId);
@@ -290,7 +298,6 @@
       }
       closeDispute(payload.disputeId);
     }
-    if (payload.type === "cancel") closeDispute(payload.disputeId);
   }
 
   Hooks.once("ready", () => {
