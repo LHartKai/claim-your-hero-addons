@@ -26,7 +26,8 @@
   "esmodules": [
     "scripts/main.js",
     "scripts/localization.js",
-    "scripts/character-reactions.js"
+    "scripts/character-reactions.js",
+    "scripts/tie-break.js"
   ],
   "styles": [
     "styles/main.css"
