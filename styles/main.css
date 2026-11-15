@@ -250,7 +250,7 @@
 .claim-your-hero-tiebreak-wait,
 .claim-your-hero-tiebreak-gm {
   position: fixed;
-  z-index: 10050;
+  z-index: 2147483647;
   top: 18%;
   left: 50%;
   width: min(440px, calc(100vw - 32px));
