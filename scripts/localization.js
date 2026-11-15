@@ -4,6 +4,7 @@
 const MODULE_ID = "claim-your-hero-addons";
 const I18N_NAMESPACE = "CLAIM_YOUR_HERO_ADDONS";
 const PERSISTENT_CLASS_SEARCH_SETTING = "persistentClassSearch";
+const ANONYMOUS_SELECTION_SETTING = "anonymousSelection";
 const CLASS_FILTER_CLASS = "claim-your-hero-addons-class-filter";
 
 function localizeSelectionFilters(app) {
@@ -24,6 +25,12 @@ Hooks.once("ready", () => {
 
   setting.name = `${I18N_NAMESPACE}.SETTINGS.PERSISTENT_CLASS_SEARCH_NAME`;
   setting.hint = `${I18N_NAMESPACE}.SETTINGS.PERSISTENT_CLASS_SEARCH_HINT`;
+
+  const anonymousSetting = game.settings.settings.get(`${MODULE_ID}.${ANONYMOUS_SELECTION_SETTING}`);
+  if (anonymousSetting) {
+    anonymousSetting.name = `${I18N_NAMESPACE}.SETTINGS.ANONYMOUS_SELECTION_NAME`;
+    anonymousSetting.hint = `${I18N_NAMESPACE}.SETTINGS.ANONYMOUS_SELECTION_HINT`;
+  }
 });
 
 Hooks.on("renderApplicationV2", app => {
