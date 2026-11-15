@@ -9,6 +9,10 @@
   // Subchannels such as ".tiebreak" are not registered and silently drop broadcasts.
   const SOCKET = `module.${ADDON_ID}`;
   const SELECTION_ID = `${CYH_ID}-selection`;
+  const swordAssetUrl = () => {
+    const modulePath = game.modules.get(ADDON_ID)?.path || `modules/${ADDON_ID}`;
+    return `${modulePath.replace(/\\/$/, "")}/assets/tiebreak-sword.png`;
+  };
   const disputes = new Map();
   const selectedHeroes = new Map();
   let originalClaim = null;
@@ -77,11 +81,12 @@
     // Keep the notice above the selection overlay (9998), but below actor sheets (10000).
     panel.style.setProperty("z-index", "9999", "important");
     panel.innerHTML = `
-      <img class="claim-your-hero-tiebreak-sword" src="modules/claim-your-hero-addons/assets/tiebreak-sword.png" alt="">
+      <img class="claim-your-hero-tiebreak-sword" alt="">
       <h2></h2>
       <img class="claim-your-hero-tiebreak-portrait" alt="">
       <p></p>
       <div class="claim-your-hero-tiebreak-avatars"></div>`;
+    panel.querySelector(".claim-your-hero-tiebreak-sword").src = swordAssetUrl();
     panel.querySelector("h2").textContent = game.i18n.format(
       "CLAIM_YOUR_HERO_ADDONS.TIEBREAK.TITLE", { name: dispute.actorName }
     );
@@ -165,7 +170,8 @@
       panel = document.createElement("section");
       panel.className = "claim-your-hero-tiebreak-gm";
       panel.dataset.tiebreakId = dispute.id;
-      panel.innerHTML = `<header><img class="claim-your-hero-tiebreak-gm-sword" src="modules/claim-your-hero-addons/assets/tiebreak-sword.png" alt=""><strong></strong></header><div class="claim-your-hero-tiebreak-columns"><span>Jogador</span><span>Nível de Interesse</span><span></span></div><div class="claim-your-hero-tiebreak-contenders"></div><footer><button type="button" class="claim-your-hero-tiebreak-cancel"></button></footer>`;
+      panel.innerHTML = `<header><img class="claim-your-hero-tiebreak-gm-sword" alt=""><strong></strong></header><div class="claim-your-hero-tiebreak-columns"><span>Jogador</span><span>Nível de Interesse</span><span></span></div><div class="claim-your-hero-tiebreak-contenders"></div><footer><button type="button" class="claim-your-hero-tiebreak-cancel"></button></footer>`;
+      panel.querySelector(".claim-your-hero-tiebreak-gm-sword").src = swordAssetUrl();
       const openPanels = document.querySelectorAll(".claim-your-hero-tiebreak-gm").length;
       panel.style.top = (14 + openPanels * 4) + "vh";
       panel.style.right = (18 + (openPanels % 3) * 18) + "px";
