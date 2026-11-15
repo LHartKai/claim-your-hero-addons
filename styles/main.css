@@ -518,7 +518,8 @@
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player:last-child {
-  border-bottom: 0;
+  /* Keep exactly one separator between the final contender and Cancel claim. */
+  border-bottom: 1px solid rgba(255,255,255,.12);
 }
 
 .claim-your-hero-tiebreak-gm .claim-your-hero-tiebreak-player-name,
