@@ -247,3 +247,20 @@
   flex-basis: 24px;
   font-size: 12px;
 }
+
+
+/* Match the original Claim Your Hero player pip finish, keeping reaction badges compact. */
+.claim-your-hero-reaction,
+.claim-your-hero-reaction.is-current-player,
+.claim-your-hero-reaction.is-other-player {
+  width: 24px;
+  height: 24px;
+  flex-basis: 24px;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+.claim-your-hero-reaction.is-current-player {
+  border-color: var(--claim-your-hero-accent, #d9ad48);
+}
