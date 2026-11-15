@@ -115,7 +115,7 @@
     }
     for (const player of participants.values()) {
       const avatar = document.createElement("span");
-      avatar.className = "claim-your-hero-tiebreak-avatar";
+      avatar.className = `claim-your-hero-tiebreak-avatar${player.userId === game.user.id ? " is-self" : ""}`;
       avatar.style.setProperty("--player-color", player.color || "#888888");
       avatar.textContent = (player.name || "?").slice(0, 1).toUpperCase();
       avatar.title = player.reason
