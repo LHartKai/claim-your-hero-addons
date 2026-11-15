@@ -71,10 +71,10 @@
     document.querySelector(".claim-your-hero-tiebreak-wait")?.remove();
     const panel = document.createElement("section");
     panel.className = "claim-your-hero-tiebreak-wait";
-    // Claim Your Hero is a full-screen Foundry app at z-index 9998. Put the
-    // waiting notice in the document root stacking layer above every app window.
-    Object.assign(panel.style, { position: "fixed", zIndex: "2147483647", top: "18%", left: "50%", transform: "translateX(-50%)" });
-    panel.style.setProperty("z-index", "2147483647", "important");
+    // Keep the player notice below Foundry character sheets and other app windows,
+    // so it never covers the sheet the player may need to consult.
+    Object.assign(panel.style, { position: "fixed", zIndex: "9997", top: "18%", left: "50%", transform: "translateX(-50%)" });
+    panel.style.setProperty("z-index", "9997", "important");
     panel.innerHTML = `
       <h2></h2><p>${game.i18n.localize("CLAIM_YOUR_HERO_ADDONS.TIEBREAK.WAITING")}</p>
       <div class="claim-your-hero-tiebreak-avatars"></div>`;
