@@ -525,13 +525,15 @@ function syncAnonymousPlayerPips(app) {
   if (app?.options?.id !== `${CYH_ID}-selection` || !app.element) return;
   const anonymous = !game.user.isGM && game.settings.get(MODULE_ID, ANONYMOUS_SELECTION_SETTING) === true;
   for (const pip of app.element.querySelectorAll(".interest-pips .pip")) {
-    pip.classList.toggle("is-anonymous", anonymous);
-    if (anonymous) {
+    // The local player always keeps their own normal identity marker.
+    // The base selection template marks it with the .self class.
+    const isOwnPip = pip.classList.contains("self");
+    const hideIdentity = anonymous && !isOwnPip;
+    pip.classList.toggle("is-anonymous", hideIdentity);
+    if (hideIdentity) {
       pip.textContent = "?";
       pip.removeAttribute("data-tooltip");
       pip.removeAttribute("aria-label");
-    } else {
-      pip.classList.remove("is-anonymous");
     }
   }
 }
