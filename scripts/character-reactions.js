@@ -40,7 +40,9 @@
     const reaction = REACTIONS.find(item => item.id === reactionId);
     if (!reaction) return null;
 
-    const anonymous = !game.user.isGM && game.settings.get(MODULE_ID, ANONYMOUS_SELECTION_SETTING) === true;
+    const anonymous = !game.user.isGM
+      && user.id !== game.user.id
+      && game.settings.get(MODULE_ID, ANONYMOUS_SELECTION_SETTING) === true;
     const color = getPlayerColor(user);
     const badge = document.createElement("span");
     badge.className = `claim-your-hero-reaction${user.id === game.user.id ? " is-current-player" : " is-other-player"}${anonymous ? " is-anonymous" : ""}`;
