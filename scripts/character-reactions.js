@@ -5,6 +5,7 @@
 (() => {
   const MODULE_ID = "claim-your-hero-addons";
   const FLAG_KEY = "characterReactions";
+  const ANONYMOUS_SELECTION_SETTING = "anonymousSelection";
   const SELECTION_ID = "claim-your-hero-selection";
   const CARD_SELECTOR = ".hero-card[data-actor-id]";
   const RAIL_CLASS = "claim-your-hero-reaction-rail";
@@ -39,13 +40,18 @@
     const reaction = REACTIONS.find(item => item.id === reactionId);
     if (!reaction) return null;
 
+    const anonymous = !game.user.isGM
+      && user.id !== game.user.id
+      && game.settings.get(MODULE_ID, ANONYMOUS_SELECTION_SETTING) === true;
     const color = getPlayerColor(user);
     const badge = document.createElement("span");
-    badge.className = `claim-your-hero-reaction${user.id === game.user.id ? " is-current-player" : " is-other-player"}`;
-    badge.style.setProperty("--reaction-player-color", color);
-    badge.dataset.userId = user.id;
-    badge.dataset.reaction = reactionId;
-    badge.title = `${user.name} — ${getReactionLabel(reactionId)}`;
+    badge.className = `claim-your-hero-reaction${user.id === game.user.id ? " is-current-player" : " is-other-player"}${anonymous ? " is-anonymous" : ""}`;
+    if (!anonymous) {
+      badge.style.setProperty("--reaction-player-color", color);
+      badge.dataset.userId = user.id;
+      badge.dataset.reaction = reactionId;
+    }
+    badge.title = anonymous ? "Jogador anônimo" : `${user.name} — ${getReactionLabel(reactionId)}`;
     badge.setAttribute("aria-label", badge.title);
 
     const icon = document.createElement("i");
@@ -203,6 +209,9 @@
     document.addEventListener("contextmenu", handleCharacterContextMenu, true);
     Hooks.on("renderApplicationV2", enhanceSelection);
     Hooks.on("updateUser", refreshOpenSelectionScreens);
+    Hooks.on("updateSetting", setting => {
+      if (setting.key === `${MODULE_ID}.${ANONYMOUS_SELECTION_SETTING}`) refreshOpenSelectionScreens();
+    });
     console.log(`[${MODULE_ID}] Character reactions ready.`);
   });
 })();

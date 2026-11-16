@@ -7,6 +7,7 @@ const CYH_FLAG = "pendingViews";
 const CYH_ROSTER_SETTING = "roster";
 const CYH_ROLES_SETTING = "roles";
 const PERSISTENT_CLASS_SEARCH_SETTING = "persistentClassSearch";
+const ANONYMOUS_SELECTION_SETTING = "anonymousSelection";
 const SHEET_CLASS = "claim-your-hero-addons-sheet-layer";
 const SHEET_Z_INDEX = "10000";
 const CLASS_FILTER_CLASS = "claim-your-hero-addons-class-filter";
@@ -509,7 +510,33 @@ Hooks.once("init", () => {
     type: Boolean,
     default: false
   });
+
+  game.settings.register(MODULE_ID, ANONYMOUS_SELECTION_SETTING, {
+    name: "Seleção Anônima",
+    hint: "Oculta a identidade dos jogadores e suas reações para todos os jogadores. O GM continua vendo as identidades reais. A alteração é aplicada imediatamente.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
 });
+
+function syncAnonymousPlayerPips(app) {
+  if (app?.options?.id !== `${CYH_ID}-selection` || !app.element) return;
+  const anonymous = !game.user.isGM && game.settings.get(MODULE_ID, ANONYMOUS_SELECTION_SETTING) === true;
+  for (const pip of app.element.querySelectorAll(".interest-pips .pip")) {
+    // The local player always keeps their own normal identity marker.
+    // The base selection template marks it with the .self class.
+    const isOwnPip = pip.classList.contains("self");
+    const hideIdentity = anonymous && !isOwnPip;
+    pip.classList.toggle("is-anonymous", hideIdentity);
+    if (hideIdentity) {
+      pip.textContent = "?";
+      pip.removeAttribute("data-tooltip");
+      pip.removeAttribute("aria-label");
+    }
+  }
+}
 
 Hooks.once("ready", async () => {
   console.log(`[${MODULE_ID}] Sheet layering, pending-view synchronization, and class filtering active.`);
@@ -525,10 +552,18 @@ Hooks.once("ready", async () => {
       patchBringToFront(app);
       promoteActorSheet(app);
     }
+    syncAnonymousPlayerPips(app);
     syncRosterViewerIndicators(app);
     syncSelectionOwnership(app);
     ensureClassFilter(app);
     ensurePersistentClassFilter(app);
+  });
+
+  Hooks.on("updateSetting", setting => {
+    if (setting.key !== `${MODULE_ID}.${ANONYMOUS_SELECTION_SETTING}`) return;
+    for (const app of foundry.applications.instances.values()) {
+      if (app?.options?.id === `${CYH_ID}-selection`) app.render({ force: true });
+    }
   });
 
   Hooks.on("updateUser", async (user, changes) => {

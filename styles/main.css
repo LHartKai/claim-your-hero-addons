@@ -462,6 +462,24 @@
 }
 
 
+/* Anonymous selection: preserve icon geometry while replacing identity with a white question mark. */
+.claim-your-hero-reaction.is-anonymous,
+.claim-your-hero-tiebreak-avatar.is-anonymous,
+.claim-your-hero.hero-selection .interest-pips .pip.is-anonymous {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, .6) !important;
+  text-shadow: none !important;
+}
+
+ .claim-your-hero.hero-selection .interest-pips .pip.is-anonymous {
+  font-size: 0.8rem;
+}
+
+.claim-your-hero-reaction.is-anonymous > i {
+  color: #fff !important;
+}
+
 /* Fully opaque arbitration surface: character sheets must not show through it. */
 .claim-your-hero-tiebreak-wait {
   background: #14100d !important;

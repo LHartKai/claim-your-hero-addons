@@ -3,7 +3,9 @@
     "NAME": "Claim Your Hero — Addons",
     "SETTINGS": {
       "PERSISTENT_CLASS_SEARCH_NAME": "Pesquisa por Função persistente",
-      "PERSISTENT_CLASS_SEARCH_HINT": "Caso algum personagem da sua lista possua uma função que não esteja atualmente selecionada como recomendada no menu Composição Recomendada, durante a seleção de personagem, essa função aparecerá abaixo das recomendações."
+      "PERSISTENT_CLASS_SEARCH_HINT": "Caso algum personagem da sua lista possua uma função que não esteja atualmente selecionada como recomendada no menu Composição Recomendada, durante a seleção de personagem, essa função aparecerá abaixo das recomendações.",
+      "ANONYMOUS_SELECTION_NAME": "Seleção Anônima",
+      "ANONYMOUS_SELECTION_HINT": "Oculta a identidade dos jogadores e suas reações para todos os jogadores. O GM continua vendo as identidades reais. A alteração é aplicada imediatamente."
     },
     "CLASS_FILTER": {
       "ARIA_LABEL": "Filtro por classe"
