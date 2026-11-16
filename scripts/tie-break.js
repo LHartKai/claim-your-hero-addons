@@ -118,7 +118,7 @@
     for (const player of participants.values()) {
       const avatar = document.createElement("span");
       avatar.className = `claim-your-hero-tiebreak-avatar${player.userId === game.user.id ? " is-self" : ""}`;
-      const anonymous = isAnonymousSelection();
+      const anonymous = isAnonymousSelection() && player.userId !== game.user.id;
       if (!anonymous) avatar.style.setProperty("--player-color", player.color || "#888888");
       avatar.classList.toggle("is-anonymous", anonymous);
       avatar.textContent = anonymous ? "?" : (player.name || "?").slice(0, 1).toUpperCase();
