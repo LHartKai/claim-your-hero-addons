@@ -17,6 +17,65 @@ const OWNER = foundry.CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
 // The filter is UI-local: each open selection application keeps its own choice.
 const classFilters = new WeakMap();
 
+/**
+ * Keep the selection background video element alive while Claim Your Hero
+ * re-renders its stage after a card is selected or another player broadcasts
+ * an interest update. Reusing the same HTMLVideoElement preserves playback
+ * position and avoids restarting the background on every stage replacement.
+ */
+const selectionVideoObservers = new WeakMap();
+
+function preserveSelectionBackgroundVideo(app) {
+  if (app?.options?.id !== `${CYH_ID}-selection` || !app.element) return;
+  if (selectionVideoObservers.has(app)) return;
+
+  const root = app.element;
+  let persistentVideo = root.querySelector(".stage video.stage-bg");
+
+  const getVideoSource = video =>
+    video?.querySelector("source")?.getAttribute("src") ?? "";
+
+  const syncVideo = () => {
+    const stage = root.querySelector(".stage");
+    if (!stage) return;
+
+    const renderedVideo = stage.querySelector("video.stage-bg");
+
+    if (!persistentVideo) {
+      if (renderedVideo) persistentVideo = renderedVideo;
+      return;
+    }
+
+    if (persistentVideo.isConnected) {
+      if (renderedVideo && renderedVideo !== persistentVideo) {
+        if (getVideoSource(renderedVideo) === getVideoSource(persistentVideo)) {
+          renderedVideo.replaceWith(persistentVideo);
+        } else {
+          persistentVideo = renderedVideo;
+        }
+      }
+      return;
+    }
+
+    if (!renderedVideo) {
+      persistentVideo = null;
+      return;
+    }
+
+    if (getVideoSource(renderedVideo) === getVideoSource(persistentVideo)) {
+      renderedVideo.replaceWith(persistentVideo);
+    } else {
+      // A GM changed the configured video: adopt the newly rendered element.
+      persistentVideo = renderedVideo;
+    }
+  };
+
+  const observer = new MutationObserver(syncVideo);
+  observer.observe(root, { childList: true, subtree: true });
+  selectionVideoObservers.set(app, observer);
+  syncVideo();
+}
+
 function hasSelectionOverlay() {
   return !!document.querySelector(`.${CYH_ID}.hero-selection`);
 }
@@ -548,6 +607,7 @@ Hooks.once("ready", async () => {
   }
 
   Hooks.on("renderApplicationV2", (app) => {
+    preserveSelectionBackgroundVideo(app);
     if (app?.actor) {
       patchBringToFront(app);
       promoteActorSheet(app);
