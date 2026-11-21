@@ -607,6 +607,7 @@ Hooks.once("ready", async () => {
   }
 
   Hooks.on("renderApplicationV2", (app) => {
+    preserveSelectionBackgroundVideo(app);
     if (app?.actor) {
       patchBringToFront(app);
       promoteActorSheet(app);
